@@ -6,12 +6,12 @@ require (
 	github.com/bitcoin-sv/go-sdk v1.1.18
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-resty/resty/v2 v2.16.5
-	github.com/jarcoal/httpmock v1.3.1
-	github.com/miekg/dns v1.1.63
-	github.com/rs/zerolog v1.33.0
+	github.com/jarcoal/httpmock v1.4.0
+	github.com/miekg/dns v1.1.65
+	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
 	go.elastic.co/ecszerolog v0.2.0
-	golang.org/x/net v0.35.0
+	golang.org/x/net v0.38.0
 )
 
 require (
@@ -39,12 +39,12 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.33.0 // indirect
-	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
-	golang.org/x/tools v0.23.0 // indirect
+	golang.org/x/crypto v0.36.0 // indirect
+	golang.org/x/mod v0.23.0 // indirect
+	golang.org/x/sync v0.12.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
