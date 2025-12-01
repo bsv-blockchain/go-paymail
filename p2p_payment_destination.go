@@ -10,6 +10,29 @@ import (
 	"github.com/bitcoin-sv/go-sdk/script"
 )
 
+var (
+	// ErrP2PInvalidURL is returned when P2P URL is invalid
+	ErrP2PInvalidURL = errors.New("invalid url")
+	// ErrP2PPaymentRequestNil is returned when payment request is nil
+	ErrP2PPaymentRequestNil = errors.New("paymentRequest cannot be nil")
+	// ErrP2PSatoshisRequired is returned when satoshis is required but not set
+	ErrP2PSatoshisRequired = errors.New("satoshis is required")
+	// ErrP2PMissingAlias is returned when alias is missing
+	ErrP2PMissingAlias = errors.New("missing alias")
+	// ErrP2PMissingDomain is returned when domain is missing
+	ErrP2PMissingDomain = errors.New("missing domain")
+	// ErrP2PAddressNotFound is returned when paymail address is not found
+	ErrP2PAddressNotFound = errors.New("paymail address not found")
+	// ErrP2PBadResponse is returned when receiving bad response from paymail provider
+	ErrP2PBadResponse = errors.New("bad response from paymail provider")
+	// ErrP2PMissingReference is returned when reference is missing from response
+	ErrP2PMissingReference = errors.New("missing a returned reference value")
+	// ErrP2PMissingOutput is returned when output is missing from response
+	ErrP2PMissingOutput = errors.New("missing a returned output")
+	// ErrP2PMissingScript is returned when script is missing from output
+	ErrP2PMissingScript = errors.New("script was missing from output")
+)
+
 /*
 Example:
 {
@@ -56,22 +79,22 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 ) (response *PaymentDestinationResponse, err error) {
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
-		err = fmt.Errorf("invalid url: %s", p2pURL)
+		err = fmt.Errorf("%s: %s: %w", "invalid url", p2pURL, ErrP2PInvalidURL)
 		return response, err
 	}
 
 	// Basic requirements for request
 	if paymentRequest == nil {
-		err = errors.New("paymentRequest cannot be nil")
+		err = ErrP2PPaymentRequestNil
 		return response, err
 	} else if paymentRequest.Satoshis == 0 {
-		err = errors.New("satoshis is required")
+		err = ErrP2PSatoshisRequired
 		return response, err
 	} else if len(alias) == 0 {
-		err = errors.New("missing alias")
+		err = ErrP2PMissingAlias
 		return response, err
 	} else if len(domain) == 0 {
-		err = errors.New("missing domain")
+		err = ErrP2PMissingDomain
 		return response, err
 	}
 
@@ -95,15 +118,15 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 
 		// Paymail address not found?
 		if response.StatusCode == http.StatusNotFound {
-			err = errors.New("paymail address not found")
+			err = ErrP2PAddressNotFound
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
 				return response, err
 			}
 			err = fmt.Errorf(
-				"bad response from paymail provider: code %d, message: %s",
-				response.StatusCode, serverError.Message,
+				"code %d, message: %s: %w",
+				response.StatusCode, serverError.Message, ErrP2PBadResponse,
 			)
 		}
 
@@ -117,13 +140,13 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 
 	// Check for a reference number
 	if len(response.Reference) == 0 {
-		err = errors.New("missing a returned reference value")
+		err = ErrP2PMissingReference
 		return response, err
 	}
 
 	// No outputs?
 	if len(response.Outputs) == 0 {
-		err = errors.New("missing a returned output")
+		err = ErrP2PMissingOutput
 		return response, err
 	}
 
@@ -131,7 +154,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 	for index, out := range response.Outputs {
 		// No script returned
 		if len(out.Script) == 0 {
-			err = fmt.Errorf("script was missing from output: %d", index)
+			err = fmt.Errorf("output %d: %w", index, ErrP2PMissingScript)
 			return response, err
 		}
 

@@ -30,8 +30,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.NotEqual(t, 0, len(destination.Outputs))
-		assert.NotEqual(t, 0, len(destination.Reference))
+		assert.NotEmpty(t, destination.Outputs)
+		assert.NotEmpty(t, destination.Reference)
 		assert.Equal(t, uint64(100), destination.Outputs[0].Satoshis)
 	})
 
@@ -51,8 +51,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusNotModified, destination.StatusCode)
-		assert.NotEqual(t, 0, len(destination.Outputs))
-		assert.NotEqual(t, 0, len(destination.Reference))
+		assert.NotEmpty(t, destination.Outputs)
+		assert.NotEmpty(t, destination.Reference)
 		assert.Equal(t, uint64(100), destination.Outputs[0].Satoshis)
 	})
 
@@ -248,7 +248,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Outputs))
+		assert.Empty(t, destination.Outputs)
 	})
 
 	t.Run("missing reference", func(t *testing.T) {
@@ -273,7 +273,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Reference))
+		assert.Empty(t, destination.Reference)
 	})
 
 	t.Run("missing outputs", func(t *testing.T) {
@@ -298,7 +298,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Outputs))
+		assert.Empty(t, destination.Outputs)
 	})
 
 	t.Run("invalid script", func(t *testing.T) {
@@ -323,7 +323,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Outputs[0].Address))
+		assert.Empty(t, destination.Outputs[0].Address)
 	})
 
 	t.Run("empty script", func(t *testing.T) {
@@ -348,8 +348,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Outputs[0].Address))
-		assert.Equal(t, 0, len(destination.Outputs[0].Script))
+		assert.Empty(t, destination.Outputs[0].Address)
+		assert.Empty(t, destination.Outputs[0].Script)
 	})
 
 	t.Run("invalid hex in script", func(t *testing.T) {
@@ -374,8 +374,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
-		assert.Equal(t, 0, len(destination.Outputs[0].Address))
-		assert.Equal(t, 1, len(destination.Outputs[0].Script))
+		assert.Empty(t, destination.Outputs[0].Address)
+		assert.Len(t, destination.Outputs[0].Script, 1)
 	})
 }
 

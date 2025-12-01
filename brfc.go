@@ -4,8 +4,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
+)
+
+var (
+	// ErrBRFCInvalid is returned when a BRFC specification is invalid
+	ErrBRFCInvalid = errors.New("brfc is invalid")
+	// ErrBRFCTitleInvalid is returned when a BRFC title is invalid
+	ErrBRFCTitleInvalid = errors.New("invalid brfc title, length: 0")
 )
 
 // BRFCSpec is a full BRFC specification document
@@ -56,7 +64,7 @@ func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
 		if valid, id, err := spec.Validate(); err != nil {
 			return nil, err
 		} else if !valid {
-			return nil, fmt.Errorf("brfc: [%s] is invalid - id returned: %s vs %s", spec.Title, id, spec.ID)
+			return nil, fmt.Errorf("brfc: [%s] - id returned: %s vs %s: %w", spec.Title, id, spec.ID, ErrBRFCInvalid)
 		}
 
 		// Add to existing list
@@ -73,7 +81,7 @@ func (b *BRFCSpec) Generate() error {
 	// Validate the title (only required field)
 	if len(b.Title) == 0 {
 		b.ID = ""
-		return fmt.Errorf("invalid brfc title, length: 0")
+		return ErrBRFCTitleInvalid
 	}
 
 	// Start a new SHA256 hash

@@ -46,13 +46,13 @@ func TestExecuteSimplifiedPaymentVerification_ValidTransaction_Success(t *testin
 		t.Run(tc.name, func(t *testing.T) {
 			// given
 			bdata, err := beef.DecodeBEEF(tc.beef)
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			// when
 			err = ExecuteSimplifiedPaymentVerification(context.Background(), bdata, new(mockServiceProvider))
 
 			// then
-			require.Nil(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -123,11 +123,11 @@ func TestExecuteSimplifiedPaymentVerification_CorruptedTransaction_ReturnError(t
 		t.Run(tc.name, func(t *testing.T) {
 			// given
 			validDecodedBeef, err := beef.DecodeBEEF(tc.beef)
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			// when
 			err = ExecuteSimplifiedPaymentVerification(context.Background(), validDecodedBeef, new(mockServiceProvider))
-			require.NotNil(t, err)
+			require.Error(t, err)
 
 			// then
 			require.Equal(t, tc.expectedError, err)

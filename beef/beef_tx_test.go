@@ -105,14 +105,14 @@ func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
 			decodedBEEF, err := DecodeBEEF(beef)
 
 			// then
-			assert.Nil(t, err)
+			assert.NoError(t, err)
 
-			assert.Equal(t, len(tc.expectedDecodedBEEF.Transactions), len(decodedBEEF.Transactions), "expected %v inputs, but got %v", len(tc.expectedDecodedBEEF.Transactions), len(decodedBEEF.Transactions))
+			assert.Len(t, decodedBEEF.Transactions, len(tc.expectedDecodedBEEF.Transactions), "expected %v inputs, but got %v", len(tc.expectedDecodedBEEF.Transactions), len(decodedBEEF.Transactions))
 
-			assert.Equal(t, len(tc.expectedDecodedBEEF.BUMPs), len(decodedBEEF.BUMPs), "expected %v BUMPs, but got %v", len(tc.expectedDecodedBEEF.BUMPs), len(decodedBEEF.BUMPs))
+			assert.Len(t, decodedBEEF.BUMPs, len(tc.expectedDecodedBEEF.BUMPs), "expected %v BUMPs, but got %v", len(tc.expectedDecodedBEEF.BUMPs), len(decodedBEEF.BUMPs))
 
 			for i, bump := range tc.expectedDecodedBEEF.BUMPs {
-				assert.Equal(t, len(bump.Path), len(decodedBEEF.BUMPs[i].Path), "expected %v BUMPPaths for %v BUMP, but got %v", len(bump.Path), i, len(decodedBEEF.BUMPs[i].Path))
+				assert.Len(t, decodedBEEF.BUMPs[i].Path, len(bump.Path), "expected %v BUMPPaths for %v BUMP, but got %v", len(bump.Path), i, len(decodedBEEF.BUMPs[i].Path))
 				assert.Equal(t, bump.Path, decodedBEEF.BUMPs[i].Path, "expected equal BUMPPaths for %v BUMP, expected: %v but got %v", i, bump, len(decodedBEEF.BUMPs[i].Path))
 			}
 

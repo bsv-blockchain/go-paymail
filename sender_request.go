@@ -1,10 +1,24 @@
 package paymail
 
 import (
+	"errors"
 	"fmt"
 
 	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
 	primitives "github.com/bitcoin-sv/go-sdk/primitives/ec"
+)
+
+var (
+	// ErrSenderRequestMissingKeyAddress is returned when key address is missing
+	ErrSenderRequestMissingKeyAddress = errors.New("missing key address")
+	// ErrSenderRequestMissingSignature is returned when signature is missing
+	ErrSenderRequestMissingSignature = errors.New("missing a signature to verify")
+	// ErrSenderRequestMissingPrivateKey is returned when private key is missing
+	ErrSenderRequestMissingPrivateKey = errors.New("missing private key")
+	// ErrSenderRequestMissingDt is returned when dt is missing
+	ErrSenderRequestMissingDt = errors.New("missing dt")
+	// ErrSenderRequestMissingSenderHandle is returned when senderHandle is missing
+	ErrSenderRequestMissingSenderHandle = errors.New("missing senderHandle")
 )
 
 /*
@@ -38,9 +52,9 @@ type SenderRequest struct {
 func (s *SenderRequest) Verify(keyAddress, signature string) error {
 	// Basic checks before trying the signature verification
 	if len(keyAddress) == 0 {
-		return fmt.Errorf("missing key address")
+		return ErrSenderRequestMissingKeyAddress
 	} else if len(signature) == 0 {
-		return fmt.Errorf("missing a signature to verify")
+		return ErrSenderRequestMissingSignature
 	}
 
 	decodedSig, err := DecodeSignature(signature)
@@ -60,11 +74,11 @@ func (s *SenderRequest) Verify(keyAddress, signature string) error {
 func (s *SenderRequest) Sign(privateKey string) ([]byte, error) {
 	// Basic checks before trying to sign the request
 	if len(privateKey) == 0 {
-		return nil, fmt.Errorf("missing private key")
+		return nil, ErrSenderRequestMissingPrivateKey
 	} else if len(s.Dt) == 0 {
-		return nil, fmt.Errorf("missing dt")
+		return nil, ErrSenderRequestMissingDt
 	} else if len(s.SenderHandle) == 0 {
-		return nil, fmt.Errorf("missing senderHandle")
+		return nil, ErrSenderRequestMissingSenderHandle
 	}
 
 	privKey, err := primitives.PrivateKeyFromHex(privateKey)

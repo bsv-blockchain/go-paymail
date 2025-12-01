@@ -88,7 +88,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusBadRequest, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("missing target", func(t *testing.T) {
@@ -151,7 +151,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusBadRequest, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("invalid quotes - good response", func(t *testing.T) {
@@ -209,7 +209,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusNotModified, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("successful response with PIKE capability", func(t *testing.T) {

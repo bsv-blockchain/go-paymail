@@ -2,9 +2,21 @@ package paymail
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
+)
+
+var (
+	// ErrCapabilitiesMissingTarget is returned when target is missing
+	ErrCapabilitiesMissingTarget = errors.New("missing target")
+	// ErrCapabilitiesMissingPort is returned when port is missing
+	ErrCapabilitiesMissingPort = errors.New("missing port")
+	// ErrCapabilitiesMissingVersion is returned when BSV Alias version is missing
+	ErrCapabilitiesMissingVersion = errors.New("missing bsv alias version")
+	// ErrCapabilitiesBadResponse is returned when receiving bad response from paymail provider
+	ErrCapabilitiesBadResponse = errors.New("bad response from paymail provider")
 )
 
 /*
@@ -94,10 +106,10 @@ func (c *CapabilitiesPayload) GetBool(brfcID, alternateID string) bool {
 func (c *Client) GetCapabilities(target string, port int) (response *CapabilitiesResponse, err error) {
 	// Basic requirements for the request
 	if len(target) == 0 {
-		err = fmt.Errorf("missing target")
+		err = ErrCapabilitiesMissingTarget
 		return response, err
 	} else if port == 0 {
-		err = fmt.Errorf("missing port")
+		err = ErrCapabilitiesMissingPort
 		return response, err
 	}
 
@@ -120,7 +132,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 		if err = json.Unmarshal(resp.Body, serverError); err != nil {
 			return response, err
 		}
-		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
+		err = fmt.Errorf("code %d, message: %s: %w", response.StatusCode, serverError.Message, ErrCapabilitiesBadResponse)
 		return response, err
 	}
 
@@ -147,7 +159,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 
 	// Invalid version detected
 	if len(response.BsvAlias) == 0 {
-		err = fmt.Errorf("missing %s version", DefaultServiceName)
+		err = ErrCapabilitiesMissingVersion
 		return response, err
 	}
 

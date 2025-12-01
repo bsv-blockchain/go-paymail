@@ -17,6 +17,15 @@ import (
 	"github.com/bsv-blockchain/go-paymail/logging"
 )
 
+var (
+	// ErrDemoUnableDecodePrivateKey is returned when unable to decode private key
+	ErrDemoUnableDecodePrivateKey = errors.New("unable to decode private key")
+	// ErrDemoInvalidSignature is returned when signature is invalid
+	ErrDemoInvalidSignature = errors.New("invalid signature")
+	// ErrDemoFailedCreatePaymail is returned when failed to create paymail address in database
+	ErrDemoFailedCreatePaymail = errors.New("failed to create paymail address in demo database")
+)
+
 // paymailAddressTable is the demo data for the example server (table: paymail_address)
 var demoPaymailAddressTable []*paymail.AddressInformation
 
@@ -45,7 +54,7 @@ func InitDemoDatabase() error {
 			demo.name,
 			demo.id,
 		); err != nil {
-			return fmt.Errorf("failed to create paymail address in demo database for alias: %s id: %s", demo.alias, demo.id)
+			return fmt.Errorf("alias: %s id: %s: %w", demo.alias, demo.id, ErrDemoFailedCreatePaymail)
 		}
 	}
 
@@ -117,14 +126,14 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 
 	privateKeyFromHex, err := ec.PrivateKeyFromHex(p.PrivateKey)
 	if err != nil {
-		return nil, errors.New("unable to decode private key: " + err.Error())
+		return nil, fmt.Errorf("%w: %v", ErrDemoUnableDecodePrivateKey, err)
 	}
 
 	// Create a signature of output if senderValidation is enabled
 	if senderValidation {
 		sigBytes, err := bsm.SignMessage(privateKeyFromHex, ls.Bytes())
 		if err != nil {
-			return nil, errors.New("invalid signature: " + err.Error())
+			return nil, fmt.Errorf("%w: %v", ErrDemoInvalidSignature, err)
 		}
 		response.Signature = paymail.EncodeSignature(sigBytes)
 	}

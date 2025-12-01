@@ -9,6 +9,7 @@ import (
 	primitives "github.com/bitcoin-sv/go-sdk/primitives/ec"
 	"github.com/bitcoin-sv/go-sdk/script"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestSenderRequest_Sign will test the method Sign()
@@ -51,7 +52,7 @@ func TestSenderRequest_Sign(t *testing.T) {
 		senderRequest.Dt = time.Now().UTC().Format(time.RFC3339)
 		senderRequest.SenderHandle = ""
 		sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Equal(t, len(sigBytes), 0)
 	})
 

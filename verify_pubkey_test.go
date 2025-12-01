@@ -29,7 +29,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
 		assert.Equal(t, testPubKey, verification.PubKey)
-		assert.Equal(t, true, verification.Match)
+		assert.True(t, verification.Match)
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		assert.Equal(t, http.StatusNotModified, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
 		assert.Equal(t, testPubKey, verification.PubKey)
-		assert.Equal(t, true, verification.Match)
+		assert.True(t, verification.Match)
 	})
 
 	t.Run("missing url", func(t *testing.T) {

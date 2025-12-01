@@ -71,7 +71,7 @@ func TestNewClient(t *testing.T) {
 		assert.Equal(t, defaultSSLDeadline, client.GetOptions().sslDeadline)
 		assert.Equal(t, defaultHTTPTimeout, client.GetOptions().httpTimeout)
 		assert.Equal(t, defaultRetryCount, client.GetOptions().retryCount)
-		assert.Equal(t, false, client.GetOptions().requestTracing)
+		assert.False(t, client.GetOptions().requestTracing)
 		assert.NotEqual(t, 0, len(client.GetOptions().brfcSpecs))
 		assert.Greater(t, len(client.GetBRFCs()), 6)
 	})
@@ -101,7 +101,7 @@ func TestNewClient(t *testing.T) {
 
 	t.Run("custom name server", func(t *testing.T) {
 		client, err := NewClient(WithNameServer("9.9.9.9"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, "9.9.9.9", client.GetOptions().nameServer)
 	})
@@ -129,7 +129,7 @@ func TestNewClient(t *testing.T) {
 
 	t.Run("custom ssl deadline", func(t *testing.T) {
 		client, err := NewClient(WithSSLDeadline(7 * time.Second))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, 7*time.Second, client.GetOptions().sslDeadline)
 	})
@@ -163,7 +163,7 @@ func TestClient_GetBRFCs(t *testing.T) {
 	// get default brfcs
 	t.Run("get brfcs", func(t *testing.T) {
 		client, err := NewClient()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 
 		brfcs := client.GetBRFCs()
@@ -239,8 +239,8 @@ func TestDefaultClientOptions(t *testing.T) {
 	assert.Equal(t, defaultSSLDeadline, options.sslDeadline)
 	assert.Equal(t, defaultHTTPTimeout, options.httpTimeout)
 	assert.Equal(t, defaultRetryCount, options.retryCount)
-	assert.Equal(t, false, options.requestTracing)
-	assert.NotEqual(t, 0, len(options.brfcSpecs))
+	assert.False(t, options.requestTracing)
+	assert.NotEmpty(t, options.brfcSpecs)
 	assert.Greater(t, len(options.brfcSpecs), 6)
 }
 
