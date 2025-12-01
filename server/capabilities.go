@@ -2,13 +2,14 @@ package server
 
 import (
 	"fmt"
-	"github.com/bitcoin-sv/go-paymail/errors"
 	"net/http"
 	"strings"
 
+	"github.com/bsv-blockchain/go-paymail/errors"
+
 	"github.com/gin-gonic/gin"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 type CallableCapability struct {

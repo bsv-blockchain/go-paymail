@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	"github.com/bitcoin-sv/go-paymail"
-	"github.com/bitcoin-sv/go-paymail/server"
-	"github.com/bitcoin-sv/go-paymail/spv"
+	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/server"
+	"github.com/bsv-blockchain/go-paymail/spv"
 )
 
 // Example demo implementation of a service provider

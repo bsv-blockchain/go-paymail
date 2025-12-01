@@ -2,10 +2,11 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/bitcoin-sv/go-paymail/errors"
 	"net/http"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
+
+	"github.com/bsv-blockchain/go-paymail"
 	"github.com/gin-gonic/gin"
 )
 

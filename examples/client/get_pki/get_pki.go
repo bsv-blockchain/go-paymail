@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bitcoin-sv/go-paymail"
 	"log"
+
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 func main() {

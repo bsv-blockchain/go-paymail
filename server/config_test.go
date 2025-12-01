@@ -1,14 +1,15 @@
 package server
 
 import (
-	"github.com/bitcoin-sv/go-paymail/errors"
 	"testing"
 	"time"
+
+	"github.com/bsv-blockchain/go-paymail/errors"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 // testConfig loads a basic test configuration

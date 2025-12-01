@@ -3,10 +3,10 @@ package server
 import (
 	"time"
 
-	"github.com/bitcoin-sv/go-paymail/logging"
+	"github.com/bsv-blockchain/go-paymail/logging"
 	"github.com/rs/zerolog"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 // ConfigOps allow functional options to be supplied

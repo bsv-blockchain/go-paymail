@@ -3,9 +3,9 @@ package spv
 import (
 	"context"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 
-	"github.com/bitcoin-sv/go-paymail/beef"
+	"github.com/bsv-blockchain/go-paymail/beef"
 
 	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 )
