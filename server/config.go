@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/rs/zerolog"
 
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 // Configuration paymail server configuration object
@@ -46,7 +46,6 @@ type Domain struct {
 
 // Validate will check that the configuration meets a minimum requirement to run the server
 func (c *Configuration) Validate() error {
-
 	// Requires domains for the server to run
 	if len(c.PaymailDomains) == 0 && !c.PaymailDomainsValidationDisabled {
 		return errors.ErrDomainMissing
@@ -95,7 +94,6 @@ func (c *Configuration) IsAllowedDomain(domain string) bool {
 
 // AddDomain will add the domain if it does not exist
 func (c *Configuration) AddDomain(domain string) (err error) {
-
 	// Sanity check
 	if len(domain) == 0 {
 		return errors.ErrDomainMissing
@@ -104,23 +102,22 @@ func (c *Configuration) AddDomain(domain string) (err error) {
 	// Sanitize and standardize
 	domain, err = paymail.SanitizeDomain(domain)
 	if err != nil {
-		return
+		return err
 	}
 
 	// Already exists?
 	if c.IsAllowedDomain(domain) {
-		return
+		return err
 	}
 
 	// Create the domain
 	c.PaymailDomains = append(c.PaymailDomains, &Domain{Name: domain})
-	return
+	return err
 }
 
 // NewConfig will make a new server configuration
 // The serviceProvider must have registered necessary services before calling them (e.g., PikeServiceProvider has to be registered if Pike capabilities are supported)
 func NewConfig(serviceProvider *PaymailServiceLocator, opts ...ConfigOps) (*Configuration, error) {
-
 	// Check that a service provider is set
 	if serviceProvider == nil {
 		return nil, errors.ErrServiceProviderNil

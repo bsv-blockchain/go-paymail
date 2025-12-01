@@ -4,10 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	script "github.com/bitcoin-sv/go-sdk/script"
 	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {

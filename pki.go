@@ -33,20 +33,19 @@ type PKIPayload struct {
 //
 // Specs: http://bsvalias.org/03-public-key-infrastructure.html
 func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKIResponse, err error) {
-
 	// Require a valid url
 	if len(pkiURL) == 0 || !strings.Contains(pkiURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", pkiURL)
-		return
+		return response, err
 	}
 
 	// Basic requirements for the request
 	if len(alias) == 0 {
 		err = fmt.Errorf("missing alias")
-		return
+		return response, err
 	} else if len(domain) == 0 {
 		err = fmt.Errorf("missing domain")
-		return
+		return response, err
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
@@ -56,7 +55,7 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKIResponse, er
 	// Fire the GET request
 	var resp StandardResponse
 	if resp, err = c.getRequest(reqURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -66,27 +65,27 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKIResponse, er
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 		serverError := &ServerError{}
 		if err = json.Unmarshal(resp.Body, serverError); err != nil {
-			return
+			return response, err
 		}
 		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
 	if err = json.Unmarshal(resp.Body, &response); err != nil {
-		return
+		return response, err
 	}
 
 	// Invalid version detected
 	if len(response.BsvAlias) == 0 {
 		err = fmt.Errorf("missing bsvalias version")
-		return
+		return response, err
 	}
 
 	// Check basic requirements (handle should match our alias@domain.tld)
 	if response.Handle != alias+"@"+domain {
 		err = fmt.Errorf("pki response handle %s does not match paymail address: %s", response.Handle, alias+"@"+domain)
-		return
+		return response, err
 	}
 
 	// Check the PubKey length
@@ -96,5 +95,5 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKIResponse, er
 		err = fmt.Errorf("returned pubkey is not the required length of %d, got: %d", PubKeyLength, len(response.PubKey))
 	}
 
-	return
+	return response, err
 }

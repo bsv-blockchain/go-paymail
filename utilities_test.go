@@ -12,10 +12,9 @@ import (
 
 // TestSanitizePaymail will test the method SanitizePaymail()
 func TestSanitizePaymail(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		input           string
 		expectedAlias   string
 		expectedDomain  string
@@ -63,10 +62,9 @@ func BenchmarkSanitizePaymail(b *testing.B) {
 
 // TestValidatePaymail will test the method ValidatePaymail()
 func TestValidatePaymail(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		input         string
 		expectedError bool
 	}{
@@ -111,10 +109,9 @@ func BenchmarkValidatePaymail(b *testing.B) {
 
 // TestValidateDomain will test the method ValidateDomain()
 func TestValidateDomain(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		input         string
 		expectedError bool
 	}{
@@ -159,7 +156,7 @@ func BenchmarkValidateDomain(b *testing.B) {
 func TestConvertHandle(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		input    string
 		beta     bool
 		expected string
@@ -203,7 +200,7 @@ func BenchmarkConvertHandle(b *testing.B) {
 func TestValidateTimestamp(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		timestamp     string
 		expectedError bool
 	}{

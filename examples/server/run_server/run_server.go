@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail/logging"
-
 	"github.com/bsv-blockchain/go-paymail/server"
 )
 
@@ -38,7 +37,7 @@ func main() {
 		server.WithTimeout(15*time.Second),
 		server.WithCapabilities(customCapabilities()),
 	)
-	config.Prefix = "http://" //normally paymail requires https, but for demo purposes we'll use http
+	config.Prefix = "http://" // normally paymail requires https, but for demo purposes we'll use http
 	if err != nil {
 		logger.Fatal().Msg(err.Error())
 	}

@@ -2,8 +2,9 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Handlers are used to isolate loading the routes (used for testing)

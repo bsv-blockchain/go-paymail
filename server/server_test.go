@@ -60,11 +60,11 @@ func TestWithServer(t *testing.T) {
 		assert.NotNil(t, capabilities)
 		assert.Greater(t, len(capabilities), 0)
 
-		//Check if all callable capabilities are accessible by trying to make a request to each one of them
+		// Check if all callable capabilities are accessible by trying to make a request to each one of them
 		for _, cap := range capabilities {
 			capUrl, ok := cap.(string)
 			if !ok {
-				continue //skip static capabilities
+				continue // skip static capabilities
 			}
 
 			capUrl = strings.ReplaceAll(capUrl, PaymailAddressTemplate, "example@domain.com")
@@ -75,7 +75,7 @@ func TestWithServer(t *testing.T) {
 
 			_, err = http.Get(capUrl)
 
-			//Only verify if the current 'capUrl' endpoint is accessible, even if the 'GET' method is not permitted for it.
+			// Only verify if the current 'capUrl' endpoint is accessible, even if the 'GET' method is not permitted for it.
 			assert.NoError(t, err)
 		}
 	})

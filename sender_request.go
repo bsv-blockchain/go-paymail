@@ -35,7 +35,7 @@ type SenderRequest struct {
 //
 // Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
-func (s *SenderRequest) Verify(keyAddress string, signature string) error {
+func (s *SenderRequest) Verify(keyAddress, signature string) error {
 	// Basic checks before trying the signature verification
 	if len(keyAddress) == 0 {
 		return fmt.Errorf("missing key address")

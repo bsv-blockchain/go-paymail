@@ -11,10 +11,9 @@ import (
 
 // TestBRFCSpec_Generate will test the method Generate()
 func TestBRFCSpec_Generate(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		brfc          *BRFCSpec
 		expectedID    string
 		expectedError bool
@@ -54,10 +53,9 @@ func BenchmarkBRFCSpec_Generate(b *testing.B) {
 
 // TestBRFCSpec_Validate will test the method Validate()
 func TestBRFCSpec_Validate(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		brfc          *BRFCSpec
 		expectedID    string
 		expectedError bool
@@ -124,7 +122,7 @@ func TestLoadBRFCs(t *testing.T) {
 	_ = json.Unmarshal([]byte(BRFCKnownSpecifications), &specs)
 	defSpecsLen := len(specs)
 
-	var tests = []struct {
+	tests := []struct {
 		specJSON       string
 		expectedLength int
 		expectedError  bool

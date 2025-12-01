@@ -1,9 +1,10 @@
 package logging
 
 import (
+	"os"
+
 	"github.com/rs/zerolog"
 	"go.elastic.co/ecszerolog"
-	"os"
 )
 
 // GetDefaultLogger generates and returns a default logger instance.

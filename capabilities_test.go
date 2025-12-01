@@ -320,7 +320,7 @@ func BenchmarkClient_GetCapabilities(b *testing.B) {
 func TestCapabilities_Has(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
@@ -421,7 +421,7 @@ func BenchmarkCapabilities_Has(b *testing.B) {
 func TestCapabilities_GetBool(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
@@ -520,83 +520,88 @@ func BenchmarkCapabilities_GetBool(b *testing.B) {
 
 // TestCapabilities_GetString will test the method GetString()
 func TestCapabilities_GetString(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
 		expectedValue string
 	}{
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"pki",
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"0c4339ef99c2",
 			"pki",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"0c4339ef99c2",
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"pki",
 			"",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"wrong",
 			"wrong",
 			"",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"wrong",
 			"pki",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",

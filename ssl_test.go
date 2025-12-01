@@ -20,7 +20,7 @@ func TestClient_CheckSSL(t *testing.T) {
 	client := newTestClient(t)
 
 	t.Run("valid ssl certs", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			host string
 		}{
 			{"google.com"},
@@ -36,7 +36,7 @@ func TestClient_CheckSSL(t *testing.T) {
 	})
 
 	t.Run("invalid ssl certs", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			host string
 		}{
 			{"google"},

@@ -8,14 +8,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bsv-blockchain/go-paymail/logging"
-
-	"github.com/bsv-blockchain/go-paymail"
-
 	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
 	ec "github.com/bitcoin-sv/go-sdk/primitives/ec"
 	"github.com/bitcoin-sv/go-sdk/script"
 	"github.com/bitcoin-sv/go-sdk/transaction/template/p2pkh"
+
+	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/logging"
 )
 
 // paymailAddressTable is the demo data for the example server (table: paymail_address)
@@ -37,7 +36,6 @@ var demoAliases = []struct {
 
 // InitDemoDatabase creates demo data for the database based on the given aliases
 func InitDemoDatabase() error {
-
 	// Generate paymail address records
 	for _, demo := range demoAliases {
 		if err := generateDemoPaymail(
@@ -58,7 +56,6 @@ func InitDemoDatabase() error {
 //
 // NOTE: creates a private key and pubkey
 func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
-
 	// Start a row
 	row := &paymail.AddressInformation{
 		Alias:  alias,
@@ -71,14 +68,14 @@ func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
 	// Generate new private key
 	key, err := ec.NewPrivateKey()
 	if err != nil {
-		return
+		return err
 	}
 
 	row.PrivateKey = hex.EncodeToString((key.Serialize()))
 
 	addr, err := script.NewAddressFromPublicKey(key.PubKey(), true)
 	if err != nil {
-		return
+		return err
 	}
 
 	row.LastAddress = addr.AddressString
@@ -86,7 +83,7 @@ func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
 	// Add to the table
 	demoPaymailAddressTable = append(demoPaymailAddressTable, row)
 
-	return
+	return err
 }
 
 // DemoGetPaymailByAlias will find a paymail address given an alias
@@ -101,8 +98,8 @@ func DemoGetPaymailByAlias(alias, domain string) (*paymail.AddressInformation, e
 
 // DemoCreateAddressResolutionResponse will create a new destination for the address resolution
 func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string,
-	senderValidation bool) (*paymail.ResolutionPayload, error) {
-
+	senderValidation bool,
+) (*paymail.ResolutionPayload, error) {
 	// Get the paymail record
 	p, err := DemoGetPaymailByAlias(alias, domain)
 	if err != nil {
@@ -137,8 +134,8 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 
 // DemoCreateP2PDestinationResponse will create a basic resolution response for the demo
 func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
-	satoshis uint64) (*paymail.PaymentDestinationPayload, error) {
-
+	satoshis uint64,
+) (*paymail.PaymentDestinationPayload, error) {
 	// Get the paymail record
 	p, err := DemoGetPaymailByAlias(alias, domain)
 	if err != nil {
@@ -163,7 +160,8 @@ func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
 
 // DemoRecordTransaction will record the tx in the datalayer
 func DemoRecordTransaction(_ context.Context,
-	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionPayload, error) {
+	p2pTx *paymail.P2PTransaction,
+) (*paymail.P2PTransactionPayload, error) {
 	logger := logging.GetDefaultLogger()
 
 	// Record the transaction

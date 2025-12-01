@@ -13,7 +13,6 @@ import (
 
 // TestSenderRequest_Sign will test the method Sign()
 func TestSenderRequest_Sign(t *testing.T) {
-
 	// Create key
 	key, err := primitives.NewPrivateKey()
 	assert.NoError(t, err)
@@ -77,7 +76,6 @@ func TestSenderRequest_Sign(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleSenderRequest_Sign() {
-
 	// Test private key
 	key := "54035dd4c7dda99ac473905a3d82f7864322b49bab1ff441cc457183b9bd8abd"
 
@@ -106,7 +104,6 @@ func ExampleSenderRequest_Sign() {
 
 // BenchmarkSenderRequest_Sign benchmarks the method Sign()
 func BenchmarkSenderRequest_Sign(b *testing.B) {
-
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
@@ -122,7 +119,6 @@ func BenchmarkSenderRequest_Sign(b *testing.B) {
 
 // TestSenderRequest_Verify will test the method Verify()
 func TestSenderRequest_Verify(t *testing.T) {
-
 	// Create key
 	key, err := primitives.NewPrivateKey()
 	assert.NoError(t, err)
@@ -177,7 +173,6 @@ func TestSenderRequest_Verify(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleSenderRequest_Verify() {
-
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",
@@ -201,7 +196,6 @@ func ExampleSenderRequest_Verify() {
 
 // BenchmarkSenderRequest_Verify benchmarks the method Verify()
 func BenchmarkSenderRequest_Verify(b *testing.B) {
-
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",

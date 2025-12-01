@@ -3,11 +3,10 @@ package spv
 import (
 	"context"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
+	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
-
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 type MerkleRootVerifier interface {
@@ -26,7 +25,6 @@ type MerkleRootConfirmationRequestItem struct {
 
 // ExecuteSimplifiedPaymentVerification executes the SPV for decoded BEEF tx
 func ExecuteSimplifiedPaymentVerification(ctx context.Context, dBeef *beef.DecodedBEEF, provider MerkleRootVerifier) error {
-
 	for _, txDt := range dBeef.Transactions {
 		tx := txDt.Transaction
 

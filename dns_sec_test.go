@@ -16,7 +16,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 
 	client := newTestClient(t)
 
-	var tests = []struct {
+	tests := []struct {
 		host          string
 		expectedError bool
 	}{

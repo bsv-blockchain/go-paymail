@@ -27,7 +27,6 @@ type BRFCSpec struct {
 // additionSpecifications is appended to the default specs
 // BRFCKnownSpecifications is a local constant of JSON to preload known BRFC ids
 func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
-
 	// Load the default specs
 	specs := make([]*BRFCSpec, 0)
 	if err := json.Unmarshal(
@@ -71,7 +70,6 @@ func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
 //
 // See more: http://bsvalias.org/01-02-brfc-id-assignment.html
 func (b *BRFCSpec) Generate() error {
-
 	// Validate the title (only required field)
 	if len(b.Title) == 0 {
 		b.ID = ""
@@ -122,7 +120,6 @@ func (b *BRFCSpec) Generate() error {
 // Returns the ID that was generated to compare against the existing id
 // Returns valid bool for convenience, but also sets b.Valid = true
 func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
-
 	// Copy and generate (copying ensures that running Generate() will not override the existing ID)
 	tempBRFC := new(BRFCSpec)
 	*tempBRFC = *b
@@ -132,7 +129,7 @@ func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
 
 	// Run the generate method to return an ID
 	if err = tempBRFC.Generate(); err != nil {
-		return
+		return valid, id, err
 	}
 
 	// Set the ID generated (for external comparison etc.)
@@ -144,5 +141,5 @@ func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
 		b.Valid = valid
 	}
 
-	return
+	return valid, id, err
 }

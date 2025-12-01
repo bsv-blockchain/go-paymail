@@ -38,7 +38,6 @@ type OutputTemplate struct {
 }
 
 func (c *Client) AddContactRequest(url, alias, domain string, request *PikeContactRequestPayload) (*PikeContactRequestResponse, error) {
-
 	if err := c.validateUrlWithPaymail(url, alias, domain); err != nil {
 		return nil, err
 	}
@@ -107,22 +106,22 @@ func (c *Client) GetOutputsTemplate(pikeURL, alias, domain string, payload *Pike
 	// Require a valid URL
 	if len(pikeURL) == 0 || !strings.Contains(pikeURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", pikeURL)
-		return
+		return response, err
 	}
 
 	// Basic requirements for request
 	if payload == nil {
 		err = errors.New("payload cannot be nil")
-		return
+		return response, err
 	} else if payload.Amount == 0 {
 		err = errors.New("amount is required")
-		return
+		return response, err
 	} else if len(alias) == 0 {
 		err = errors.New("missing alias")
-		return
+		return response, err
 	} else if len(domain) == 0 {
 		err = errors.New("missing domain")
-		return
+		return response, err
 	}
 
 	// Set the base URL and path, assuming the URL is from the prior GetCapabilities() request
@@ -131,7 +130,7 @@ func (c *Client) GetOutputsTemplate(pikeURL, alias, domain string, payload *Pike
 	// Fire the POST request
 	var resp StandardResponse
 	if resp, err = c.postRequest(reqURL, payload); err != nil {
-		return
+		return response, err
 	}
 
 	// Test the status code

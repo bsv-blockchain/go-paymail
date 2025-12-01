@@ -57,30 +57,30 @@ type P2PTransactionPayload struct {
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
 func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
-	transaction *P2PTransaction) (response *P2PTransactionResponse, err error) {
-
+	transaction *P2PTransaction,
+) (response *P2PTransactionResponse, err error) {
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", p2pURL)
-		return
+		return response, err
 	} else if len(alias) == 0 {
 		err = errors.New("missing alias")
-		return
+		return response, err
 	} else if len(domain) == 0 {
 		err = errors.New("missing domain")
-		return
+		return response, err
 	}
 
 	// Basic requirements for request
 	if transaction == nil {
 		err = errors.New("transaction cannot be nil")
-		return
+		return response, err
 	} else if len(transaction.Beef) == 0 && len(transaction.Hex) == 0 {
 		err = errors.New("beef or hex is required")
-		return
+		return response, err
 	} else if len(transaction.Reference) == 0 {
 		err = errors.New("reference is required")
-		return
+		return response, err
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
@@ -91,7 +91,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 	// Fire the POST request
 	var resp StandardResponse
 	if resp, err = c.postRequest(reqURL, transaction); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -106,7 +106,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
-				return
+				return response, err
 			}
 			if len(serverError.Message) == 0 {
 				err = fmt.Errorf("bad response from paymail provider: code %d, body: %s", response.StatusCode, string(resp.Body))
@@ -115,19 +115,19 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 			}
 		}
 
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
 	if err = json.Unmarshal(resp.Body, &response); err != nil {
-		return
+		return response, err
 	}
 
 	// Check for a TX ID
 	if len(response.TxID) == 0 {
 		err = errors.New("missing a returned txid")
-		return
+		return response, err
 	}
 
-	return
+	return response, err
 }

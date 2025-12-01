@@ -92,14 +92,13 @@ func (c *CapabilitiesPayload) GetBool(brfcID, alternateID string) bool {
 //
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
 func (c *Client) GetCapabilities(target string, port int) (response *CapabilitiesResponse, err error) {
-
 	// Basic requirements for the request
 	if len(target) == 0 {
 		err = fmt.Errorf("missing target")
-		return
+		return response, err
 	} else if port == 0 {
 		err = fmt.Errorf("missing port")
-		return
+		return response, err
 	}
 
 	// Set the base url and path
@@ -109,7 +108,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	// Fire the GET request
 	var resp StandardResponse
 	if resp, err = c.getRequest(reqURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -119,10 +118,10 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 		serverError := &ServerError{}
 		if err = json.Unmarshal(resp.Body, serverError); err != nil {
-			return
+			return response, err
 		}
 		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
@@ -136,28 +135,28 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 
 			// Parse again after fixing quotes
 			if err = json.Unmarshal([]byte(bodyString), &response); err != nil {
-				return
+				return response, err
 			}
 		}
 
 		// Still have an error?
 		if err != nil {
-			return
+			return response, err
 		}
 	}
 
 	// Invalid version detected
 	if len(response.BsvAlias) == 0 {
 		err = fmt.Errorf("missing %s version", DefaultServiceName)
-		return
+		return response, err
 	}
 
 	// Parse PIKE capability
 	if err = parsePikeCapability(response); err != nil {
-		return
+		return response, err
 	}
 
-	return
+	return response, err
 }
 
 // ExtractPikeOutputsURL extracts the outputs URL from the PIKE capability

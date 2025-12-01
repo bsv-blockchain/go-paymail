@@ -52,27 +52,27 @@ type PaymentOutput struct {
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
 func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
-	paymentRequest *PaymentRequest) (response *PaymentDestinationResponse, err error) {
-
+	paymentRequest *PaymentRequest,
+) (response *PaymentDestinationResponse, err error) {
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", p2pURL)
-		return
+		return response, err
 	}
 
 	// Basic requirements for request
 	if paymentRequest == nil {
 		err = errors.New("paymentRequest cannot be nil")
-		return
+		return response, err
 	} else if paymentRequest.Satoshis == 0 {
 		err = errors.New("satoshis is required")
-		return
+		return response, err
 	} else if len(alias) == 0 {
 		err = errors.New("missing alias")
-		return
+		return response, err
 	} else if len(domain) == 0 {
 		err = errors.New("missing domain")
-		return
+		return response, err
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
@@ -83,7 +83,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 	// Fire the POST request
 	var resp StandardResponse
 	if resp, err = c.postRequest(reqURL, paymentRequest); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -99,7 +99,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
-				return
+				return response, err
 			}
 			err = fmt.Errorf(
 				"bad response from paymail provider: code %d, message: %s",
@@ -107,24 +107,24 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 			)
 		}
 
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
 	if err = json.Unmarshal(resp.Body, &response); err != nil {
-		return
+		return response, err
 	}
 
 	// Check for a reference number
 	if len(response.Reference) == 0 {
 		err = errors.New("missing a returned reference value")
-		return
+		return response, err
 	}
 
 	// No outputs?
 	if len(response.Outputs) == 0 {
 		err = errors.New("missing a returned output")
-		return
+		return response, err
 	}
 
 	// Loop all outputs
@@ -132,24 +132,24 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 		// No script returned
 		if len(out.Script) == 0 {
 			err = fmt.Errorf("script was missing from output: %d", index)
-			return
+			return response, err
 		}
 
 		var sc *script.Script
 		sc, err = script.NewFromHex(out.Script)
 		if err != nil {
-			return
+			return response, err
 		}
 
 		var addresses []string
 		addresses, err = sc.Addresses()
 		if err != nil || len(addresses) == 0 {
 			err = errors.New("invalid output script, missing an address")
-			return
+			return response, err
 		}
 
 		response.Outputs[index].Address = addresses[0]
 	}
 
-	return
+	return response, err
 }

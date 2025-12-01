@@ -60,7 +60,8 @@ func ExampleClient_SendP2PTransaction() {
 	rawTransaction := &P2PTransaction{
 		Hex:       "some-raw-hex",
 		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
-		Reference: "1234567"}
+		Reference: "1234567",
+	}
 
 	// Fire the request
 	transaction, err := client.SendP2PTransaction(
@@ -113,7 +114,8 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 	rawTransaction := &P2PTransaction{
 		Hex:       "some-raw-hex",
 		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
-		Reference: "1234567"}
+		Reference: "1234567",
+	}
 
 	// Fire the request
 	transaction, err := client.SendP2PTransaction(

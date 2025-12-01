@@ -38,7 +38,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	}
 	if len(domainName) == 0 || len(domainName) > 255 {
 		err = fmt.Errorf("invalid parameter: domainName")
-		return
+		return srv, err
 	}
 
 	// Force the case
@@ -70,7 +70,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 			"srv cname was invalid or not found using: %s and expected: %s",
 			cnameCheck, cname,
 		)
-		return
+		return srv, err
 	}
 
 	// Only return the first record (in case multiple are returned)
@@ -79,14 +79,13 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Remove any period on the end
 	srv.Target = strings.TrimSuffix(srv.Target, ".")
 
-	return
+	return srv, err
 }
 
 // ValidateSRVRecord will check for a valid SRV record for paymail following specifications
 //
 // Specs: http://bsvalias.org/02-01-host-discovery.html
 func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, priority, weight uint16) error {
-
 	// Check the parameters
 	if srv == nil {
 		return fmt.Errorf("invalid parameter: srv is missing or nil")

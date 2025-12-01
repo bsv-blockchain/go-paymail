@@ -7,15 +7,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/tester"
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bsv-blockchain/go-paymail/tester"
 )
 
 // newTestClient will return a client for testing purposes
 func newTestClient(t *testing.T, opts ...ClientOps) ClientInterface {
-
 	// Create a Resty Client
 	httpClient := tester.MockResty()
 	if t != nil {

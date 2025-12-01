@@ -1,9 +1,10 @@
 package server
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/errors"
-	"github.com/gin-gonic/gin"
 )
 
 // GetPaymailAndCreateMetadata is a helper function to get the paymail from the request, check it in database and create the metadata based on that.
@@ -14,11 +15,11 @@ func (c *Configuration) GetPaymailAndCreateMetadata(context *gin.Context, satosh
 	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
 	if len(paymailAddress) == 0 {
 		errors.ErrorResponse(context, errors.ErrInvalidPaymail, c.Logger)
-		return
+		return alias, domain, md, ok
 	}
 	if !c.IsAllowedDomain(domain) {
 		errors.ErrorResponse(context, errors.ErrDomainUnknown, c.Logger)
-		return
+		return alias, domain, md, ok
 	}
 
 	// Start the PaymentRequest
@@ -29,7 +30,7 @@ func (c *Configuration) GetPaymailAndCreateMetadata(context *gin.Context, satosh
 	// Did we get some satoshis?
 	if paymentRequest.Satoshis == 0 {
 		errors.ErrorResponse(context, errors.ErrMissingFieldSatoshis, c.Logger)
-		return
+		return alias, domain, md, ok
 	}
 
 	// Create the metadata struct
@@ -40,13 +41,13 @@ func (c *Configuration) GetPaymailAndCreateMetadata(context *gin.Context, satosh
 	foundPaymail, err := c.actions.GetPaymailByAlias(context.Request.Context(), alias, domain, md)
 	if err != nil {
 		errors.ErrorResponse(context, err, c.Logger)
-		return
+		return alias, domain, md, ok
 	}
 	if foundPaymail == nil {
 		errors.ErrorResponse(context, errors.ErrCouldNotFindPaymail, c.Logger)
-		return
+		return alias, domain, md, ok
 	}
 
 	ok = true
-	return
+	return alias, domain, md, ok
 }

@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 type CallableCapability struct {
@@ -18,9 +17,11 @@ type CallableCapability struct {
 	Handler gin.HandlerFunc
 }
 
-type NestedCapabilitiesMap map[string]CallableCapabilitiesMap
-type CallableCapabilitiesMap map[string]CallableCapability
-type StaticCapabilitiesMap map[string]any
+type (
+	NestedCapabilitiesMap   map[string]CallableCapabilitiesMap
+	CallableCapabilitiesMap map[string]CallableCapability
+	StaticCapabilitiesMap   map[string]any
+)
 
 func (c *Configuration) SetGenericCapabilities() {
 	_addCapabilities(c.callableCapabilities,
@@ -111,13 +112,13 @@ func (c *Configuration) SetPikePaymentCapabilities() {
 	)
 }
 
-func _addCapabilities[T any](base map[string]T, newCaps map[string]T) {
+func _addCapabilities[T any](base, newCaps map[string]T) {
 	for key, val := range newCaps {
 		base[key] = val
 	}
 }
 
-func _addNestedCapabilities(base NestedCapabilitiesMap, newCaps NestedCapabilitiesMap) {
+func _addNestedCapabilities(base, newCaps NestedCapabilitiesMap) {
 	for key, val := range newCaps {
 		if _, ok := base[key]; !ok {
 			base[key] = make(CallableCapabilitiesMap)

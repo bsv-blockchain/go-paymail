@@ -43,7 +43,6 @@ func ValidateAndSanitisePaymail(paymail string, isBeta bool) (*SanitisedPaymail,
 // Domain is the lowercase sanitized version (domain.tld)
 // Address is the full sanitized paymail address (alias@domain.tld)
 func SanitizePaymail(paymailAddress string) (alias, domain, address string) {
-
 	// Sanitize the paymail address
 	address = SanitizeEmail(paymailAddress)
 
@@ -64,7 +63,7 @@ func SanitizePaymail(paymailAddress string) (alias, domain, address string) {
 		address = ""
 	}
 
-	return
+	return alias, domain, address
 }
 
 // ValidatePaymail will do a basic validation on the paymail format (email address format)
@@ -86,7 +85,6 @@ func ValidatePaymail(paymailAddress string) error {
 // This will not check to see if the domain is an active paymail provider
 // This will not check DNS records to make sure the domain is active
 func ValidateDomain(domain string) error {
-
 	// Check for a real domain (require at least one period)
 	if !strings.Contains(domain, ".") {
 		return fmt.Errorf("domain name is invalid: %s", domain)
@@ -118,7 +116,6 @@ func ConvertHandle(handle string, isBeta bool) string {
 // This is used to validate the "dt" parameter in resolve_address.go
 // Allowing 3 minutes before/after for
 func ValidateTimestamp(timestamp string) error {
-
 	// Parse the time using the RFC3339 layout
 	dt, err := time.Parse(time.RFC3339, timestamp)
 	if err != nil {

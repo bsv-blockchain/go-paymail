@@ -3,8 +3,9 @@ package paymail
 import (
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/interfaces"
 	"github.com/go-resty/resty/v2"
+
+	"github.com/bsv-blockchain/go-paymail/interfaces"
 )
 
 type (
@@ -37,7 +38,6 @@ type (
 // If no options are given, it will use the defaultClientOptions()
 // If no client is supplied it will use a default Resty HTTP client
 func NewClient(opts ...ClientOps) (ClientInterface, error) {
-
 	// Start with the defaults
 	defaults, err := defaultClientOptions()
 	if err != nil {
@@ -100,7 +100,6 @@ func (c *Client) GetResolver() interfaces.DNSResolver {
 
 // getRequest is a standard GET request for all outgoing HTTP requests
 func (c *Client) getRequest(requestURL string) (response StandardResponse, err error) {
-
 	// Set the user agent
 	req := c.httpClient.R().SetHeader("User-Agent", c.options.userAgent)
 
@@ -112,7 +111,7 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 	// Fire the request
 	var resp *resty.Response
 	if resp, err = req.Get(requestURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Tracing enabled?
@@ -125,12 +124,11 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 
 	// Set the body
 	response.Body = resp.Body()
-	return
+	return response, err
 }
 
 // postRequest is a standard POST request for all outgoing HTTP requests
 func (c *Client) postRequest(requestURL string, data interface{}) (response StandardResponse, err error) {
-
 	// Set the user agent
 	req := c.httpClient.R().SetBody(data).SetHeader("User-Agent", c.options.userAgent)
 
@@ -142,7 +140,7 @@ func (c *Client) postRequest(requestURL string, data interface{}) (response Stan
 	// Fire the request
 	var resp *resty.Response
 	if resp, err = req.Post(requestURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Tracing enabled?
@@ -155,5 +153,5 @@ func (c *Client) postRequest(requestURL string, data interface{}) (response Stan
 
 	// Set the body
 	response.Body = resp.Body()
-	return
+	return response, err
 }

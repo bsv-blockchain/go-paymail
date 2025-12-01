@@ -12,11 +12,10 @@ import (
 //
 // All paymail requests should be via HTTPS and have a valid certificate
 func (c *Client) CheckSSL(host string) (valid bool, err error) {
-
 	// Lookup the host
 	var ips []net.IPAddr
 	if ips, err = c.resolver.LookupIPAddr(context.Background(), host); err != nil {
-		return
+		return valid, err
 	}
 
 	// Loop through all found ip addresses
@@ -87,5 +86,5 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 		}
 	}
 
-	return
+	return valid, err
 }

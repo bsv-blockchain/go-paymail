@@ -29,13 +29,13 @@ var (
 
 // CAPABILITY ERRORS
 var (
-	//ErrPrefixOrDomainMissing is when the prefix or domain is missing
+	// ErrPrefixOrDomainMissing is when the prefix or domain is missing
 	ErrPrefixOrDomainMissing = SPVError{Message: "prefix or domain is missing", StatusCode: 400, Code: "error-capabilities-prefix-or-domain-missing"}
 
-	//ErrDomainUnknown is when the domain is not in the list of allowed domains
+	// ErrDomainUnknown is when the domain is not in the list of allowed domains
 	ErrDomainUnknown = SPVError{Message: "paymail domain is unknown", StatusCode: 400, Code: "error-capabilities-domain-unknown"}
 
-	//ErrCastingNestedCapabilities is when the nested capabilities cannot be cast
+	// ErrCastingNestedCapabilities is when the nested capabilities cannot be cast
 	ErrCastingNestedCapabilities = SPVError{Message: "failed to cast nested capabilities", StatusCode: 500, Code: "error-capabilities-nested-capabilities-failed-to-cast"}
 )
 

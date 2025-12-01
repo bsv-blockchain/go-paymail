@@ -31,20 +31,19 @@ type PublicProfilePayload struct {
 //
 // Specs: https://github.com/bitcoin-sv-specs/brfc-paymail/pull/7/files
 func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (response *PublicProfileResponse, err error) {
-
 	// Require a valid url
 	if len(publicProfileURL) == 0 || !strings.Contains(publicProfileURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", publicProfileURL)
-		return
+		return response, err
 	}
 
 	// Basic requirements for request
 	if len(alias) == 0 {
 		err = fmt.Errorf("missing alias")
-		return
+		return response, err
 	} else if len(domain) == 0 {
 		err = fmt.Errorf("missing domain")
-		return
+		return response, err
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
@@ -54,7 +53,7 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 	// Fire the GET request
 	var resp StandardResponse
 	if resp, err = c.getRequest(reqURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -64,14 +63,14 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 		serverError := &ServerError{}
 		if err = json.Unmarshal(resp.Body, serverError); err != nil {
-			return
+			return response, err
 		}
 		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
 	err = json.Unmarshal(resp.Body, &response)
 
-	return
+	return response, err
 }

@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
+	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
-	"github.com/stretchr/testify/require"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 func TestExecuteSimplifiedPaymentVerification_ValidTransaction_Success(t *testing.T) {
@@ -48,10 +48,10 @@ func TestExecuteSimplifiedPaymentVerification_ValidTransaction_Success(t *testin
 			bdata, err := beef.DecodeBEEF(tc.beef)
 			require.Nil(t, err)
 
-			//when
+			// when
 			err = ExecuteSimplifiedPaymentVerification(context.Background(), bdata, new(mockServiceProvider))
 
-			//then
+			// then
 			require.Nil(t, err)
 		})
 	}
@@ -76,7 +76,6 @@ func TestExecuteSimplifiedPaymentVerification_CorruptedTransaction_ReturnError(t
 		beef          string
 		expectedError error
 	}{
-
 		{
 			name:          "SPV on someone else UTXOs (full mined)",
 			beef:          someoneElse,
@@ -126,11 +125,11 @@ func TestExecuteSimplifiedPaymentVerification_CorruptedTransaction_ReturnError(t
 			validDecodedBeef, err := beef.DecodeBEEF(tc.beef)
 			require.Nil(t, err)
 
-			//when
+			// when
 			err = ExecuteSimplifiedPaymentVerification(context.Background(), validDecodedBeef, new(mockServiceProvider))
 			require.NotNil(t, err)
 
-			//then
+			// then
 			require.Equal(t, tc.expectedError, err)
 		})
 	}

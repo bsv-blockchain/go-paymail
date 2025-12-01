@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
+	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail"
-	"github.com/gin-gonic/gin"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 func (c *Configuration) pikeNewContact(rc *gin.Context) {
