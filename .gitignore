@@ -8,6 +8,9 @@
 # Test binary, build with `go test -c`
 *.test
 
+# Go List
+go.list
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
@@ -23,16 +26,16 @@
 
 # Notes
 todo.md
-paymail-notes.md
 
-# Releases
-*.tar.gz
-
-# Generated binaries
+# Distribution
 dist
 
-# Converage
+# Code coverage
 coverage.txt
+coverage.out
 
-# vim
-*.swp
+# Fuzz Tests
+testdata
+
+# Node modules
+node_modules/

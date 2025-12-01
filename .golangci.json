@@ -21,7 +21,7 @@
                 "sections": [
                     "standard",
                     "default",
-                    "prefix(github.com/bsv-blockchain/go-safe-conversion)"
+                    "prefix(github.com/bsv-blockchain/go-paymail)"
                 ]
             },
             "gofmt": {
@@ -32,7 +32,7 @@
             },
             "goimports": {
                 "local-prefixes": [
-                    "github.com/bsv-blockchain/go-safe-conversion"
+                    "github.com/bsv-blockchain/go-paymail"
                 ]
             }
         }
@@ -44,6 +44,11 @@
         "disable": [
             "gocritic",
             "godot",
+            "gocognit",
+            "gochecknoglobals",
+            "gocyclo",
+            "revive",
+            "nestif",
             "wsl_v5"
         ],
         "enable": [
@@ -67,12 +72,9 @@
             "forbidigo",
             "funcorder",
             "gocheckcompilerdirectives",
-            "gochecknoglobals",
             "gochecknoinits",
             "gochecksumtype",
-            "gocognit",
             "goconst",
-            "gocyclo",
             "godox",
             "goheader",
             "gomoddirectives",
@@ -87,7 +89,6 @@
             "misspell",
             "musttag",
             "nakedret",
-            "nestif",
             "nilerr",
             "nilnesserr",
             "nilnil",
@@ -99,7 +100,6 @@
             "protogetter",
             "reassign",
             "recvcheck",
-            "revive",
             "rowserrcheck",
             "spancheck",
             "sqlclosecheck",
