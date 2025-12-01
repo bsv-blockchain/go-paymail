@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 
-	"github.com/bitcoin-sv/go-paymail"
-	"github.com/bitcoin-sv/go-paymail/spv"
+	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/spv"
 )
 
 // Mock implementation of a service provider

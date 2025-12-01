@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 
 	ec "github.com/bitcoin-sv/go-sdk/primitives/ec"
 	script "github.com/bitcoin-sv/go-sdk/script"

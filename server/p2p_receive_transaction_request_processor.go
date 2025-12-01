@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/rs/zerolog"
 
-	"github.com/bitcoin-sv/go-paymail"
-	"github.com/bitcoin-sv/go-paymail/beef"
+	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/beef"
 
 	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
 	script "github.com/bitcoin-sv/go-sdk/script"

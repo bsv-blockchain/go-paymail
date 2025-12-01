@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/bitcoin-sv/go-paymail"
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/gin-gonic/gin"
 )
 

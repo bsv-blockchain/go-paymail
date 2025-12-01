@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 
-	"github.com/bitcoin-sv/go-paymail/beef"
+	"github.com/bsv-blockchain/go-paymail/beef"
 	"github.com/stretchr/testify/require"
 )
 

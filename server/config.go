@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/rs/zerolog"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 // Configuration paymail server configuration object

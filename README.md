@@ -18,15 +18,15 @@
 
 **go-paymail** requires a [supported release of Go](https://golang.org/doc/devel/release.html#policy).
 ```shell script
-go get -u github.com/bitcoin-sv/go-paymail
+go get -u github.com/bsv-blockchain/go-paymail
 ```
 
 <br/>
 
 ## Documentation
-View the generated [documentation](https://pkg.go.dev/github.com/bitcoin-sv/go-paymail)
+View the generated [documentation](https://pkg.go.dev/github.com/bsv-blockchain/go-paymail)
 
-[![GoDoc](https://godoc.org/github.com/bitcoin-sv/go-paymail?status.svg&style=flat&v=4)](https://pkg.go.dev/github.com/bitcoin-sv/go-paymail)
+[![GoDoc](https://godoc.org/github.com/bsv-blockchain/go-paymail?status.svg&style=flat&v=4)](https://pkg.go.dev/github.com/bsv-blockchain/go-paymail)
 
 ### Features
 - [Paymail Client](client.go) (outgoing requests to other providers)
@@ -130,7 +130,7 @@ vet                   Run the Go vet application
 <br/>
 
 ## Examples & Tests
-All unit tests and [examples](examples) run via [GitHub Actions](https://github.com/bitcoin-sv/go-paymail/actions) and
+All unit tests and [examples](examples) run via [GitHub Actions](https://github.com/bsv-blockchain/go-paymail/actions) and
 uses [Go version 1.21](https://golang.org/doc/go1.21). View the [configuration file](.github/workflows/run-tests.yml).
 
 Run all tests (including integration tests)

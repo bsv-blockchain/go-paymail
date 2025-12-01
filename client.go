@@ -3,7 +3,7 @@ package paymail
 import (
 	"time"
 
-	"github.com/bitcoin-sv/go-paymail/interfaces"
+	"github.com/bsv-blockchain/go-paymail/interfaces"
 	"github.com/go-resty/resty/v2"
 )
 

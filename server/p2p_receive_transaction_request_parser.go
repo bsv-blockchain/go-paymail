@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bitcoin-sv/go-paymail/errors"
+	"github.com/bsv-blockchain/go-paymail/errors"
 
-	"github.com/bitcoin-sv/go-paymail"
+	"github.com/bsv-blockchain/go-paymail"
 )
 
 func parseP2pReceiveTxRequest(c *Configuration, req *http.Request, incomingPaymail string, format p2pPayloadFormat) (*p2pReceiveTxReqPayload, error) {
