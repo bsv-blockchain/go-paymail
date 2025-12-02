@@ -51,7 +51,9 @@ func NewClient(opts ...ClientOps) (ClientInterface, error) {
 
 	// Overwrite defaults with any set by user
 	for _, opt := range opts {
-		opt(client.options)
+		if opt != nil {
+			opt(client.options)
+		}
 	}
 
 	// Check for specs (if not set, use the defaults)

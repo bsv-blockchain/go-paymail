@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -11,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -37,7 +39,8 @@ func TestWithServer(t *testing.T) {
 		sl := &PaymailServiceLocator{}
 		sl.RegisterPaymailService(new(mockServiceProvider))
 
-		config, _ := NewConfig(sl, WithDomain("domain.com"))
+		logger := zerolog.New(io.Discard).With().Timestamp().Logger()
+		config, _ := NewConfig(sl, WithDomain("domain.com"), WithLogger(&logger))
 		config.Prefix = "http://"
 
 		server := httptest.NewServer(Handlers(config))

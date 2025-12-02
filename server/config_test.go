@@ -1,15 +1,23 @@
 package server
 
 import (
+	"io"
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/errors"
 )
+
+// testLogger creates a race-free logger for testing (without Caller() hook)
+func testLogger() *zerolog.Logger {
+	logger := zerolog.New(io.Discard).With().Timestamp().Logger()
+	return &logger
+}
 
 // testConfig loads a basic test configuration
 func testConfig(t *testing.T, domain string) *Configuration {
@@ -21,6 +29,7 @@ func testConfig(t *testing.T, domain string) *Configuration {
 	c, err := NewConfig(
 		&sl,
 		WithDomain(domain),
+		WithLogger(testLogger()),
 	)
 	require.NoError(t, err)
 	require.NotNil(t, c)
@@ -334,6 +343,7 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig(
 			sl,
 			WithDomain("test.com"),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -348,6 +358,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithPort(12345),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -361,6 +372,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithTimeout(10*time.Second),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -374,6 +386,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithServiceName("custom"),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -387,6 +400,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithSenderValidation(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -400,6 +414,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -421,6 +436,7 @@ func TestNewConfig(t *testing.T) {
 					Handler: nil,
 				},
 			}),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -439,6 +455,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithBeefCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -453,6 +470,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithBasicRoutes(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -472,6 +490,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithPort(12345),
 			WithDomainValidationDisabled(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -489,6 +508,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -506,6 +526,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -525,6 +546,7 @@ func TestNewConfig(t *testing.T) {
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -547,6 +569,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -568,6 +591,7 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)

@@ -218,7 +218,7 @@ func ExampleNewClient() {
 // BenchmarkNewClient benchmarks the method NewClient()
 func BenchmarkNewClient(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = NewClient(nil)
+		_, _ = NewClient()
 	}
 }
 
