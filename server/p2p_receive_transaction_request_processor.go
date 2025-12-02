@@ -16,6 +16,7 @@ import (
 
 type p2pReceiveTxReqPayload struct {
 	*paymail.P2PTransaction
+
 	incomingPaymailAlias, incomingPaymailDomain string
 }
 

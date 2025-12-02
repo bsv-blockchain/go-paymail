@@ -1,7 +1,6 @@
 package paymail
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -278,7 +277,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 		}, "invalid paymail address should error": {
 			paymail: "test@domain",
 			isBeta:  false,
-			error:   errors.New("paymail address failed format validation: test@domain"),
+			error:   fmt.Errorf("%w: %s", ErrPaymailFormatInvalid, "test@domain"),
 		}, "handcash should convert and return": {
 			paymail: "$test",
 			isBeta:  false,

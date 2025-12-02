@@ -134,7 +134,7 @@ func _addNestedCapabilities(base, newCaps NestedCapabilitiesMap) {
 func (c *Configuration) showCapabilities(context *gin.Context) {
 	// Check the host (allowed, and used for capabilities response)
 	// todo: bake this into middleware? This is protecting the "req" host name (like CORs)
-	host := ""
+	var host string
 	if context.Request.URL.IsAbs() || len(context.Request.URL.Host) == 0 {
 		host = context.Request.Host
 	} else {
@@ -169,7 +169,7 @@ func (c *Configuration) EnrichCapabilities(host string) (*paymail.CapabilitiesPa
 		payload.Capabilities[key] = cap
 	}
 	for key, cap := range c.callableCapabilities {
-		payload.Capabilities[key] = serviceUrl + string(cap.Path)
+		payload.Capabilities[key] = serviceUrl + cap.Path
 	}
 	for key, cap := range c.nestedCapabilities {
 		payload.Capabilities[key] = make(map[string]interface{})

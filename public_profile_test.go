@@ -92,7 +92,7 @@ func TestClient_GetPublicProfile(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
@@ -132,8 +132,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusOK, profile.StatusCode)
-		assert.Equal(t, "", profile.Name)
-		assert.Equal(t, "", profile.Avatar)
+		assert.Empty(t, profile.Name)
+		assert.Empty(t, profile.Avatar)
 	})
 }
 

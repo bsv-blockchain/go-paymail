@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/server"
 	"github.com/bsv-blockchain/go-paymail/spv"
 )
+
+var errNotImplemented = errors.New("not implemented")
 
 // Example demo implementation of a service provider
 type demoServiceProvider struct {
@@ -65,5 +68,5 @@ func (d *demoServiceProvider) CreatePikeOutputResponse(
 	satoshis uint64,
 	metaData *server.RequestMetadata,
 ) (*paymail.PikePaymentOutputsResponse, error) {
-	return nil, nil
+	return nil, errNotImplemented
 }

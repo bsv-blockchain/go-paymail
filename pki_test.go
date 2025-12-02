@@ -91,7 +91,7 @@ func TestClient_GetPKI(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
-		assert.Equal(t, "", pki.BsvAlias)
+		assert.Empty(t, pki.BsvAlias)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
@@ -109,8 +109,8 @@ func TestClient_GetPKI(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
-		assert.Equal(t, "", pki.BsvAlias)
-		assert.Equal(t, "", pki.PubKey)
+		assert.Empty(t, pki.BsvAlias)
+		assert.Empty(t, pki.PubKey)
 	})
 
 	t.Run("returned incorrect handle", func(t *testing.T) {
@@ -147,7 +147,7 @@ func TestClient_GetPKI(t *testing.T) {
 		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
-		assert.Equal(t, "", pki.PubKey)
+		assert.Empty(t, pki.PubKey)
 	})
 
 	t.Run("invalid pubkey length", func(t *testing.T) {
@@ -205,7 +205,7 @@ func TestClient_GetPKI(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)

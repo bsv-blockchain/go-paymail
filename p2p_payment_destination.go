@@ -31,6 +31,8 @@ var (
 	ErrP2PMissingOutput = errors.New("missing a returned output")
 	// ErrP2PMissingScript is returned when script is missing from output
 	ErrP2PMissingScript = errors.New("script was missing from output")
+	// ErrP2PInvalidOutputScript is returned when output script is invalid
+	ErrP2PInvalidOutputScript = errors.New("invalid output script, missing an address")
 )
 
 /*
@@ -167,7 +169,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 		var addresses []string
 		addresses, err = sc.Addresses()
 		if err != nil || len(addresses) == 0 {
-			err = errors.New("invalid output script, missing an address")
+			err = ErrP2PInvalidOutputScript
 			return response, err
 		}
 

@@ -85,7 +85,7 @@ func TestBRFCSpec_Validate(t *testing.T) {
 		{&BRFCSpec{Author: "nChain", ID: "ce852c4c2cd1", Title: "merchant_api", Version: "0.1"}, "eaad81dc6d4d", false, false},
 		{&BRFCSpec{Author: "Fabriik", ID: "1300361cb2d4", Title: "Asset Information", Version: "1"}, "1300361cb2d4", false, true},
 		{&BRFCSpec{Author: "Fabriik", ID: "189e32d93d28", Title: "Simple Fabriik Protocol for Tokens Build Action", Version: "1"}, "189e32d93d28", false, true},
-		{&BRFCSpec{Author: "Fabriik", ID: "95dddb461bff", Title: "Simple Fabriik Protocol for Tokens Authorise Action", Version: "1"}, "95dddb461bff", false, true},
+		{&BRFCSpec{Author: "Fabriik", ID: "736699033ec8", Title: "Simple Fabriik Protocol for Tokens Authorize Action", Version: "1"}, "736699033ec8", false, true},
 		{&BRFCSpec{Author: "Fabriik", ID: "f792b6eff07a", Title: "P2P Payment Destination with Tokens Support", Version: "1"}, "f792b6eff07a", false, true},
 		{&BRFCSpec{Author: "Darren Kellenschwiler", ID: "5c55a7fdb7bb", Title: "Background Evaluation Extended Format Transaction", Version: "1.0.0"}, "5c55a7fdb7bb", false, true},
 	}

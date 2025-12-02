@@ -1,6 +1,7 @@
 package paymail
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -8,6 +9,15 @@ import (
 	"github.com/miekg/dns"
 	"golang.org/x/net/idna"
 	"golang.org/x/net/publicsuffix"
+)
+
+var (
+	// ErrDNSNSECNotFound is returned when NSEC record is not found
+	ErrDNSNSECNotFound = errors.New("nsec record not found")
+	// ErrDNSNSEC3NotFound is returned when NSEC3 record is not found
+	ErrDNSNSEC3NotFound = errors.New("nsec3 record not found")
+	// ErrDNSNSEC3PARAMNotFound is returned when NSEC3PARAM record is not found
+	ErrDNSNSEC3PARAMNotFound = errors.New("nsec3param record not found")
 )
 
 /*
@@ -231,7 +241,7 @@ License: https://github.com/binaryfigments/dnscheck/blob/master/LICENSE
 // newDNSMessage will create a new DNS message and fire the exchange request
 func newDNSMessage(domain, nameServer, dnsPort string, dnsType uint16) (*dns.Msg, error) {
 	m := new(dns.Msg)
-	m.MsgHdr.RecursionDesired = true
+	m.RecursionDesired = true
 	m.SetQuestion(dns.Fqdn(domain), dnsType)
 	m.SetEdns0(4096, true)
 	c := new(dns.Client)
@@ -277,7 +287,7 @@ func resolveDomainNSEC(domain, nameServer, dnsPort string) (*dns.NSEC, error) {
 			return ans, nil
 		}
 	}
-	return nil, nil
+	return nil, ErrDNSNSECNotFound
 }
 
 // resolveDomainNSEC3 will resolve a domain NSEC3
@@ -295,7 +305,7 @@ func resolveDomainNSEC3(domain, nameServer, dnsPort string) (*dns.NSEC3, error) 
 			return ans, nil
 		}
 	}
-	return nil, nil
+	return nil, ErrDNSNSEC3NotFound
 }
 
 // resolveDomainNSEC3PARAM will resolve a domain NSEC3PARAM
@@ -313,7 +323,7 @@ func resolveDomainNSEC3PARAM(domain, nameServer, dnsPort string) (*dns.NSEC3PARA
 			return ans, nil
 		}
 	}
-	return nil, nil
+	return nil, ErrDNSNSEC3PARAMNotFound
 }
 
 // resolveDomainDS will resolve a domain DS

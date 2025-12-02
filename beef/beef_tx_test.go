@@ -1,12 +1,12 @@
 package beef
 
 import (
-	"errors"
 	"testing"
 
 	script "github.com/bitcoin-sv/go-sdk/script"
 	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
@@ -105,7 +105,7 @@ func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
 			decodedBEEF, err := DecodeBEEF(beef)
 
 			// then
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Len(t, decodedBEEF.Transactions, len(tc.expectedDecodedBEEF.Transactions), "expected %v inputs, but got %v", len(tc.expectedDecodedBEEF.Transactions), len(decodedBEEF.Transactions))
 
@@ -133,76 +133,76 @@ func TestDecodeBEEF_DecodeBEEF_HandlingErrors(t *testing.T) {
 			name:                         "too short hex stream",
 			hexStream:                    "001",
 			expectedDecodedBEEF:          nil,
-			expectedError:                errors.New("invalid beef hex stream"),
+			expectedError:                ErrBeefInvalidHexStream,
 			expectedCMPForTheOldestInput: false,
 		},
 		{
 			name:                         "unable to decode BEEF - only marker and version has been provided",
 			hexStream:                    "0100beef",
 			expectedDecodedBEEF:          nil,
-			expectedError:                errors.New("cannot decode BUMP - no bytes provided"),
+			expectedError:                ErrBeefNoBytesForBump,
 			expectedCMPForTheOldestInput: false,
 		},
 		{
 			name:                         "unable to decode BEEF - wrong marker",
 			hexStream:                    "0100efbe",
 			expectedDecodedBEEF:          nil,
-			expectedError:                errors.New("invalid format of transaction, BEEF marker not found"),
+			expectedError:                ErrBeefInvalidMarker,
 			expectedCMPForTheOldestInput: false,
 		},
 		{
 			name:                "unable to decode BUMP block height - proper BEEF marker and number of bumps",
 			hexStream:           "0100beef01",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract BUMP blockHeight"),
+			expectedError:       ErrBeefInsufficientBytesBlockHeight,
 		},
 		{
 			name:                "unable to decode BUMP number of leaves - proper BEEF marker, number of bumps, block height and tree height but end of stream at this point",
 			hexStream:           "0100beef01fe8a6a0c000c",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("cannot decode BUMP paths number of leaves from stream - no bytes provided"),
+			expectedError:       ErrBeefNoBytesForPaths,
 		},
 		{
 			name:                "unable to decode BUMP leaf - no offset - proper BEEF marker, number of bumps, block height and tree height and nLeaves but end of stream at this point",
 			hexStream:           "0100beef01fe8a6a0c000c04",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract offset for 0 leaf of 4 leaves"),
+			expectedError:       ErrBeefInsufficientBytesOffset,
 		},
 		{
 			name:                "unable to decode BUMP leaf - no flag - proper BEEF marker, number of bumps, block height and tree height, nLeaves and offset but end of stream at this point",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract flag for 0 leaf of 4 leaves"),
+			expectedError:       ErrBeefInsufficientBytesFlag,
 		},
 		{
 			name:                "unable to decode BUMP leaf - wrong flag - proper BEEF marker, number of bumps, block height and tree height, nLeaves and offset",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b03",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("invalid flag: 3 for 0 leaf of 4 leaves"),
+			expectedError:       ErrBeefInvalidFlag,
 		},
 		{
 			name:                "unable to decode BUMP leaf - no hash with flag 0 - proper BEEF marker, number of bumps, block height and tree height, nLeaves, offset and flag",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b00",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract hash of path"),
+			expectedError:       ErrBeefInsufficientBytesHash,
 		},
 		{
 			name:                "unable to decode BUMP leaf - no hash with flag 2 - proper BEEF marker, number of bumps, block height and tree height, nLeaves, offset and flag",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b00",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract hash of path"),
+			expectedError:       ErrBeefInsufficientBytesHash,
 		},
 		{
 			name:                "unable to decode BUMP leaf - flag 1 - proper BEEF marker, number of bumps, block height and tree height, nLeaves, offset and flag but end of stream at this point - flag 1 means that there is no hash",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b01",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract offset for 1 leaf of 4 leaves"),
+			expectedError:       ErrBeefInsufficientBytesOffset,
 		},
 		{
 			name:                "unable to decode BUMP leaf - not enough bytes for hash - proper BEEF marker, number of bumps, block height and tree height, nLeaves, offset and flag but with not enough bytes for hash",
 			hexStream:           "0100beef01fe8a6a0c000c04fde80b0011774f01d26412f0d16ea3f0447be0b5ebec67b0782e321a7a01cbdf7f734e",
 			expectedDecodedBEEF: nil,
-			expectedError:       errors.New("insufficient bytes to extract hash of path"),
+			expectedError:       ErrBeefInsufficientBytesHash,
 		},
 	}
 	for _, tc := range testCases {
@@ -214,7 +214,11 @@ func TestDecodeBEEF_DecodeBEEF_HandlingErrors(t *testing.T) {
 			result, err := DecodeBEEF(beef)
 
 			// then
-			assert.Equal(t, tc.expectedError, err, "expected error %v, but got %v", tc.expectedError, err)
+			if tc.expectedError != nil {
+				require.Error(t, err, "expected error but got nil")
+			} else {
+				require.NoError(t, err)
+			}
 			assert.Nil(t, result, "expected nil result, but got %v", result)
 		})
 	}
@@ -235,27 +239,27 @@ func TestDecodeBEEF_InvalidBeef_RetunrError(t *testing.T) {
 		{
 			name:          "DecodeBEEF - rawTx",
 			beef:          rawTx,
-			expectedError: errors.New("invalid format of transaction, BEEF marker not found"),
+			expectedError: ErrBeefInvalidMarker,
 		},
 		{
 			name:          "DecodeBEEF - empty BUMPs",
 			beef:          emptyBumps,
-			expectedError: errors.New("invalid BEEF- lack of BUMPs"),
+			expectedError: ErrBeefNoLowestBump,
 		},
 		{
 			name:          "DecodeBEEF - without  BUMPs",
 			beef:          withoutBumps,
-			expectedError: errors.New("invalid BEEF- lack of BUMPs"),
+			expectedError: ErrBeefNoLowestBump,
 		},
 		{
 			name:          "DecodeBEEF - without  input parent transactions",
 			beef:          withoutParents,
-			expectedError: errors.New("invalid BEEF- not enough transactions provided to decode BEEF"),
+			expectedError: ErrBeefInsufficientTransactions,
 		},
 		{
 			name:          "DecodeBEEF - with a bump tree higher than 64",
 			beef:          withBumpTreeHeightEq65,
-			expectedError: errors.New("invalid BEEF - treeHeight cannot be grater than 64"),
+			expectedError: ErrBeefInvalidTreeHeightMax,
 		},
 	}
 
@@ -268,7 +272,11 @@ func TestDecodeBEEF_InvalidBeef_RetunrError(t *testing.T) {
 			result, err := DecodeBEEF(tc.beef)
 
 			// then
-			assert.Equal(t, tc.expectedError, err, "expected error %v, but got %v", tc.expectedError, err)
+			if tc.expectedError != nil {
+				require.Error(t, err, "expected error but got nil")
+			} else {
+				require.NoError(t, err)
+			}
 			assert.Nil(t, result, "expected nil result, but got %v", result)
 		})
 	}

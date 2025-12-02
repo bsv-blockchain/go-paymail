@@ -31,7 +31,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("successful testnet response", func(t *testing.T) {
@@ -44,7 +44,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("successful stn response", func(t *testing.T) {
@@ -57,7 +57,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("status not modified", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusNotModified, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("bad request", func(t *testing.T) {
@@ -128,7 +128,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		response, err := client.GetCapabilities(testDomain, DefaultPort)
@@ -161,8 +161,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusOK,
-				`{“`+DefaultServiceName+`“: “`+DefaultBsvAliasVersion+`“,“capabilities“: {“6745385c3fc0“: false,
-“pki“: “`+testServerURL+`id/{alias}@{domain.tld}“,“paymentDestination“: “`+testServerURL+`address/{alias}@{domain.tld}“}}`,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": {"6745385c3fc0": false,
+"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 			),
 		)
 
@@ -171,7 +171,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("invalid alias", func(t *testing.T) {
@@ -222,7 +222,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 
 		// Check PIKE capability
 		require.NotNil(t, response.Pike)
@@ -239,7 +239,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 
 		// Check PIKE invite capability
 		require.NotNil(t, response.Pike)

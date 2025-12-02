@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -22,6 +23,7 @@ func TestCreateServer(t *testing.T) {
 		config.Timeout = 10 * time.Second
 		s := CreateServer(config)
 		require.NotNil(t, s)
+		//nolint:gosec // G112: This is a type assertion test, not server creation
 		assert.IsType(t, &http.Server{}, s)
 		assert.Equal(t, fmt.Sprintf(":%d", config.Port), s.Addr)
 		assert.Equal(t, config.Timeout, s.WriteTimeout)
@@ -42,23 +44,27 @@ func TestWithServer(t *testing.T) {
 		defer server.Close()
 
 		err := config.AddDomain(server.URL)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
-		resp, err := http.Get(fmt.Sprintf("%s/.well-known/bsvalias", server.URL))
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, fmt.Sprintf("%s/.well-known/bsvalias", server.URL), nil)
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			t.Fatalf("Failed to make GET request: %v", err)
 		}
 
 		var result map[string]interface{}
 		err = json.NewDecoder(resp.Body).Decode(&result)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, result["bsvalias"], config.BSVAliasVersion)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
-		resp.Body.Close()
+		require.NoError(t, resp.Body.Close())
 
 		capabilities := result["capabilities"].(map[string]interface{})
 		assert.NotNil(t, capabilities)
-		assert.Greater(t, len(capabilities), 0)
+		assert.NotEmpty(t, capabilities)
 
 		// Check if all callable capabilities are accessible by trying to make a request to each one of them
 		for _, cap := range capabilities {
@@ -71,9 +77,17 @@ func TestWithServer(t *testing.T) {
 			capUrl = strings.ReplaceAll(capUrl, PubKeyTemplate, "xpub")
 
 			_, err := url.Parse(capUrl)
-			assert.NoError(t, err, "Endpoint %s is not a valid URL", capUrl)
+			require.NoError(t, err, "Endpoint %s is not a valid URL", capUrl)
 
-			_, err = http.Get(capUrl)
+			req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, capUrl, nil)
+			if err != nil {
+				t.Logf("Failed to create request: %v", err)
+				continue
+			}
+			resp, err := http.DefaultClient.Do(req)
+			if err == nil {
+				_ = resp.Body.Close()
+			}
 
 			// Only verify if the current 'capUrl' endpoint is accessible, even if the 'GET' method is not permitted for it.
 			assert.NoError(t, err)

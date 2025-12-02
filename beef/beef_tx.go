@@ -41,11 +41,25 @@ var (
 	ErrBeefInsufficientBytesHash = errors.New("insufficient bytes to extract hash of path")
 	// ErrBeefInsufficientTransactions is returned when there are insufficient transactions
 	ErrBeefInsufficientTransactions = errors.New("invalid BEEF- not enough transactions provided to decode BEEF")
+	// ErrBeefInvalidHexStream is returned when BEEF hex stream is invalid
+	ErrBeefInvalidHexStream = errors.New("invalid beef hex stream")
+	// ErrBeefInvalidMarker is returned when BEEF marker is not found
+	ErrBeefInvalidMarker = errors.New("invalid format of transaction, BEEF marker not found")
+	// ErrBeefInvalidTreeHeightMax is returned when treeHeight is greater than 64
+	ErrBeefInvalidTreeHeightMax = errors.New("invalid BEEF - treeHeight cannot be grater than 64")
+	// ErrBeefInsufficientBytesOffset is returned when there are insufficient bytes to extract offset
+	ErrBeefInsufficientBytesOffset = errors.New("insufficient bytes to extract offset")
+	// ErrBeefInsufficientBytesFlag is returned when there are insufficient bytes to extract flag
+	ErrBeefInsufficientBytesFlag = errors.New("insufficient bytes to extract flag")
+	// ErrBeefInvalidFlag is returned when flag is invalid
+	ErrBeefInvalidFlag = errors.New("invalid flag")
+	// ErrBeefInvalidHasCMPFlag is returned when HasCMP flag is invalid
+	ErrBeefInvalidHasCMPFlag = errors.New("invalid HasCMP flag for transaction")
 )
 
 type TxData struct {
-	Transaction *sdk.Transaction
-	BumpIndex   *sdk.VarInt
+	Transaction *sdk.Transaction `json:"transaction"`
+	BumpIndex   *sdk.VarInt      `json:"bumpIndex"`
 
 	txID string
 }
@@ -63,8 +77,8 @@ func (td *TxData) GetTxID() string {
 }
 
 type DecodedBEEF struct {
-	BUMPs        BUMPs
-	Transactions []*TxData
+	BUMPs        BUMPs     `json:"bumps"`
+	Transactions []*TxData `json:"transactions"`
 }
 
 func DecodeBEEF(beefHex string) (*DecodedBEEF, error) {
@@ -159,23 +173,25 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 
 func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
 	bumpPath := make([]BUMPLeaf, 0)
+	//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
 	for i := 0; i < int(nLeaves); i++ {
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("insufficient bytes to extract offset for %d leaf of %d leaves", i, int(nLeaves))
+			//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesOffset)
 		}
 
 		offset, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
 
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("insufficient bytes to extract flag for %d leaf of %d leaves", i, int(nLeaves))
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesFlag)
 		}
 
 		flag := hexBytes[0]
 		hexBytes = hexBytes[1:]
 
 		if flag != dataFlag && flag != duplicateFlag && flag != txIDFlag {
-			return nil, nil, fmt.Errorf("invalid flag: %d for %d leaf of %d leaves", flag, i, int(nLeaves))
+			return nil, nil, fmt.Errorf("flag %d for leaf %d of %d: %w", flag, i, int(nLeaves), ErrBeefInvalidFlag)
 		}
 
 		if flag == duplicateFlag {
@@ -216,8 +232,10 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 
 	bytes = bytes[offset:]
 
+	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	transactions := make([]*TxData, 0, int(nTransactions))
 
+	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	for i := 0; i < int(nTransactions); i++ {
 		tx, offset, err := sdk.NewTransactionFromStream(bytes)
 		if err != nil {
@@ -227,14 +245,15 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 
 		var pathIndex *sdk.VarInt
 
-		if bytes[0] == HasBump {
+		switch bytes[0] {
+		case HasBump:
 			value, offset := sdk.NewVarIntFromBytes(bytes[1:])
 			pathIndex = &value
 			bytes = bytes[1+offset:]
-		} else if bytes[0] == HasNoBump {
+		case HasNoBump:
 			bytes = bytes[1:]
-		} else {
-			return nil, fmt.Errorf("invalid HasCMP flag for transaction at index %d", i)
+		default:
+			return nil, fmt.Errorf("transaction at index %d: %w", i, ErrBeefInvalidHasCMPFlag)
 		}
 
 		transactions = append(transactions, &TxData{
@@ -249,10 +268,10 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 func extractBytesWithoutVersionAndMarker(hexStream string) ([]byte, error) {
 	bytes, err := hex.DecodeString(hexStream)
 	if err != nil {
-		return nil, errors.New("invalid beef hex stream")
+		return nil, ErrBeefInvalidHexStream
 	}
 	if len(bytes) < 4 {
-		return nil, errors.New("invalid beef hex stream")
+		return nil, ErrBeefInvalidHexStream
 	}
 
 	// removes version bytes
@@ -270,7 +289,7 @@ func extractBytesWithoutVersionAndMarker(hexStream string) ([]byte, error) {
 
 func validateMarker(bytes []byte) error {
 	if bytes[0] != BEEFMarkerPart1 || bytes[1] != BEEFMarkerPart2 {
-		return errors.New("invalid format of transaction, BEEF marker not found")
+		return ErrBeefInvalidMarker
 	}
 
 	return nil

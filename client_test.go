@@ -60,7 +60,7 @@ func TestNewClient(t *testing.T) {
 
 	t.Run("default client", func(t *testing.T) {
 		client, err := NewClient()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, defaultDNSTimeout, client.GetOptions().dnsTimeout)
 		assert.Equal(t, defaultDNSPort, client.GetOptions().dnsPort)
@@ -72,7 +72,7 @@ func TestNewClient(t *testing.T) {
 		assert.Equal(t, defaultHTTPTimeout, client.GetOptions().httpTimeout)
 		assert.Equal(t, defaultRetryCount, client.GetOptions().retryCount)
 		assert.False(t, client.GetOptions().requestTracing)
-		assert.NotEqual(t, 0, len(client.GetOptions().brfcSpecs))
+		assert.NotEmpty(t, client.GetOptions().brfcSpecs)
 		assert.Greater(t, len(client.GetBRFCs()), 6)
 	})
 
@@ -80,21 +80,21 @@ func TestNewClient(t *testing.T) {
 		customHTTPClient := resty.New()
 		customHTTPClient.SetTimeout(defaultHTTPTimeout)
 		client, err := NewClient()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		client.WithCustomHTTPClient(customHTTPClient)
 	})
 
 	t.Run("custom dns port", func(t *testing.T) {
 		client, err := NewClient(WithDNSPort("54"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, "54", client.GetOptions().dnsPort)
 	})
 
 	t.Run("custom http timeout", func(t *testing.T) {
 		client, err := NewClient(WithHTTPTimeout(10 * time.Second))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, 10*time.Second, client.GetOptions().httpTimeout)
 	})
@@ -108,21 +108,21 @@ func TestNewClient(t *testing.T) {
 
 	t.Run("custom name server network", func(t *testing.T) {
 		client, err := NewClient(WithNameServerNetwork("tcp"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, "tcp", client.GetOptions().nameServerNetwork)
 	})
 
 	t.Run("custom retry count", func(t *testing.T) {
 		client, err := NewClient(WithRetryCount(3))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, 3, client.GetOptions().retryCount)
 	})
 
 	t.Run("custom ssl timeout", func(t *testing.T) {
 		client, err := NewClient(WithSSLTimeout(7 * time.Second))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Equal(t, 7*time.Second, client.GetOptions().sslTimeout)
 	})
@@ -144,14 +144,14 @@ func TestNewClient(t *testing.T) {
 		r := tester.NewCustomResolver(nil, nil, nil, nil)
 		client, err := NewClient()
 		assert.NotNil(t, client)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		client.WithCustomResolver(r)
 	})
 
 	t.Run("no brfcs", func(t *testing.T) {
 		var client ClientInterface
 		client, err := NewClient(WithBRFCSpecs(nil))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 	})
 }
@@ -171,7 +171,7 @@ func TestClient_GetBRFCs(t *testing.T) {
 		specs := make([]*BRFCSpec, 0)
 		_ = json.Unmarshal([]byte(BRFCKnownSpecifications), &specs)
 
-		assert.Equal(t, len(specs), len(brfcs))
+		assert.Len(t, brfcs, len(specs))
 		assert.Equal(t, "b2aa66e26b43", brfcs[0].ID)
 	})
 }
@@ -182,7 +182,7 @@ func TestClient_GetUserAgent(t *testing.T) {
 
 	t.Run("get user agent", func(t *testing.T) {
 		client, err := NewClient()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		userAgent := client.GetUserAgent()
 		assert.Equal(t, defaultUserAgent, userAgent)
@@ -195,7 +195,7 @@ func TestClient_GetResolver(t *testing.T) {
 
 	t.Run("get resolver", func(t *testing.T) {
 		client, err := NewClient()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		r := client.GetResolver()
 		assert.NotNil(t, r)
@@ -227,7 +227,7 @@ func TestDefaultClientOptions(t *testing.T) {
 	t.Parallel()
 
 	options, err := defaultClientOptions()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, options)
 
 	assert.Equal(t, defaultDNSTimeout, options.dnsTimeout)

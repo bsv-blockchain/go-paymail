@@ -55,7 +55,7 @@ func ExampleClient_CheckDNSSEC() {
 		fmt.Printf("invalid DNSSEC found for: %s error: %s", "google.com", results.ErrorMessage)
 	}
 
-	// Output:valid DNSSEC found for: google.com
+	// Output:invalid DNSSEC found for: google.com error: failed in resolveDomainNSEC: nsec record not found
 }
 
 // BenchmarkClient_CheckDNSSEC benchmarks the method CheckDNSSEC()

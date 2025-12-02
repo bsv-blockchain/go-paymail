@@ -4,21 +4,32 @@ import (
 	"errors"
 )
 
+var (
+	// ErrBumpMerkleRootMismatch is returned when merkle roots don't match for the same block
+	ErrBumpMerkleRootMismatch = errors.New("different merkle roots for the same block")
+	// ErrBumpLeafNotComputable is returned when leaf cannot be computed from children at base level
+	ErrBumpLeafNotComputable = errors.New("cannot compute leaf from children at base level")
+	// ErrBumpChildNotFound is returned when child cannot be found
+	ErrBumpChildNotFound = errors.New("could not find child")
+	// ErrBumpPairNotFound is returned when pair cannot be found
+	ErrBumpPairNotFound = errors.New("could not find pair")
+)
+
 // BUMPs represents a slice of BUMPs - BSV Unified Merkle Paths
 type BUMPs []*BUMP
 
 // BUMP is a struct that represents a whole BUMP format
 type BUMP struct {
-	BlockHeight uint64
-	Path        [][]BUMPLeaf
+	BlockHeight uint64       `json:"blockHeight"`
+	Path        [][]BUMPLeaf `json:"path"`
 }
 
 // BUMPLeaf represents each BUMP path element
 type BUMPLeaf struct {
-	Hash      string
-	TxId      bool
-	Duplicate bool
-	Offset    uint64
+	Hash      string `json:"hash"`
+	TxId      bool   `json:"txId"`
+	Duplicate bool   `json:"duplicate"`
+	Offset    uint64 `json:"offset"`
 }
 
 // Flags which are used to determine the type of BUMPLeaf
@@ -45,7 +56,7 @@ func (b BUMP) CalculateMerkleRoot() (string, error) {
 			}
 
 			if calcMerkleRoot != merkleRoot {
-				return "", errors.New("different merkle roots for the same block")
+				return "", ErrBumpMerkleRootMismatch
 			}
 		}
 	}
@@ -68,7 +79,7 @@ func calculateMerkleRoot(baseLeaf BUMPLeaf, bump BUMP) (string, error) {
 		leafInPair := findLeafByOffset(newOffset, bLevel)
 		if leafInPair == nil {
 			if previousBLevel == nil {
-				return "", errors.New("cannot compute leaf from children at base level")
+				return "", ErrBumpLeafNotComputable
 			}
 
 			var err error
@@ -115,18 +126,18 @@ func calculateFromChildren(offset uint64, bumpLeaves []BUMPLeaf) (*BUMPLeaf, err
 	offsetChildPair := offsetChild + 1
 	leaf := findLeafByOffset(offsetChild, bumpLeaves)
 	if leaf == nil {
-		return nil, errors.New("could not find child")
+		return nil, ErrBumpChildNotFound
 	}
 
 	leafInPair := findLeafByOffset(offsetChildPair, bumpLeaves)
 	if leafInPair == nil {
-		return nil, errors.New("could not find child")
+		return nil, ErrBumpChildNotFound
 	}
 
 	leftNode, rightNode := prepareNodes(*leaf, offset, *leafInPair, offsetChildPair)
 	str, err := merkleTreeParentStr(leftNode, rightNode)
 	if err != nil {
-		return nil, errors.New("could not find pair")
+		return nil, ErrBumpPairNotFound
 	}
 
 	return &BUMPLeaf{

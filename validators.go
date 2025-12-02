@@ -23,7 +23,7 @@ func IsValidIP(ipAddress string) bool {
 
 // IsValidDNSName will validate the given string as a DNS name
 func IsValidDNSName(dnsName string) bool {
-	if dnsName == "" || len(strings.Replace(dnsName, ".", "", -1)) > 255 {
+	if dnsName == "" || len(strings.ReplaceAll(dnsName, ".", "")) > 255 {
 		return false
 	}
 	return !IsValidIP(dnsName) && dnsRegEx.MatchString(dnsName)

@@ -44,6 +44,54 @@ type Domain struct {
 	Name string `json:"name"`
 }
 
+// NewConfig will make a new server configuration
+// The serviceProvider must have registered necessary services before calling them (e.g., PikeServiceProvider has to be registered if Pike capabilities are supported)
+func NewConfig(serviceProvider *PaymailServiceLocator, opts ...ConfigOps) (*Configuration, error) {
+	// Check that a service provider is set
+	if serviceProvider == nil {
+		return nil, errors.ErrServiceProviderNil
+	}
+
+	// Create the base configuration
+	config := defaultConfigOptions()
+
+	// Overwrite defaults
+	for _, opt := range opts {
+		opt(config)
+	}
+
+	if config.GenericCapabilitiesEnabled {
+		config.SetGenericCapabilities()
+	}
+	if config.P2PCapabilitiesEnabled {
+		config.SetP2PCapabilities()
+	}
+	if config.BeefCapabilitiesEnabled {
+		config.SetBeefCapabilities()
+	}
+
+	if config.PikeContactCapabilitiesEnabled {
+		config.SetPikeContactCapabilities()
+		config.pikeContactActions = serviceProvider.GetPikeContactService()
+	}
+
+	if config.PikePaymentCapabilitiesEnabled {
+		config.SetPikePaymentCapabilities()
+		config.pikePaymentActions = serviceProvider.GetPikePaymentService()
+	}
+
+	// Validate the configuration
+	if err := config.Validate(); err != nil {
+		return nil, err
+	}
+
+	// Set the service provider
+	config.actions = serviceProvider.GetPaymailService()
+
+	config.Logger.Debug().Msg("New config loaded")
+	return config, nil
+}
+
 // Validate will check that the configuration meets a minimum requirement to run the server
 func (c *Configuration) Validate() error {
 	// Requires domains for the server to run
@@ -113,52 +161,4 @@ func (c *Configuration) AddDomain(domain string) (err error) {
 	// Create the domain
 	c.PaymailDomains = append(c.PaymailDomains, &Domain{Name: domain})
 	return err
-}
-
-// NewConfig will make a new server configuration
-// The serviceProvider must have registered necessary services before calling them (e.g., PikeServiceProvider has to be registered if Pike capabilities are supported)
-func NewConfig(serviceProvider *PaymailServiceLocator, opts ...ConfigOps) (*Configuration, error) {
-	// Check that a service provider is set
-	if serviceProvider == nil {
-		return nil, errors.ErrServiceProviderNil
-	}
-
-	// Create the base configuration
-	config := defaultConfigOptions()
-
-	// Overwrite defaults
-	for _, opt := range opts {
-		opt(config)
-	}
-
-	if config.GenericCapabilitiesEnabled {
-		config.SetGenericCapabilities()
-	}
-	if config.P2PCapabilitiesEnabled {
-		config.SetP2PCapabilities()
-	}
-	if config.BeefCapabilitiesEnabled {
-		config.SetBeefCapabilities()
-	}
-
-	if config.PikeContactCapabilitiesEnabled {
-		config.SetPikeContactCapabilities()
-		config.pikeContactActions = serviceProvider.GetPikeContactService()
-	}
-
-	if config.PikePaymentCapabilitiesEnabled {
-		config.SetPikePaymentCapabilities()
-		config.pikePaymentActions = serviceProvider.GetPikePaymentService()
-	}
-
-	// Validate the configuration
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
-
-	// Set the service provider
-	config.actions = serviceProvider.GetPaymailService()
-
-	config.Logger.Debug().Msg("New config loaded")
-	return config, nil
 }

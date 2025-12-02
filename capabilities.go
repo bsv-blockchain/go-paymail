@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 )
@@ -17,6 +18,8 @@ var (
 	ErrCapabilitiesMissingVersion = errors.New("missing bsv alias version")
 	// ErrCapabilitiesBadResponse is returned when receiving bad response from paymail provider
 	ErrCapabilitiesBadResponse = errors.New("bad response from paymail provider")
+	// ErrTestRequestFailed is returned when test HTTP request fails
+	ErrTestRequestFailed = errors.New("error in request")
 )
 
 /*
@@ -68,18 +71,6 @@ func (c *CapabilitiesPayload) Has(brfcID, alternateID string) bool {
 	return false
 }
 
-// getValue will return the value (if found) from the capability (url or bool)
-//
-// Alternate is used for IE: pki (it breaks convention of using the BRFC ID)
-func (c *CapabilitiesPayload) getValue(brfcID, alternateID string) (bool, interface{}) {
-	for key, val := range c.Capabilities {
-		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
-			return true, val
-		}
-	}
-	return false, nil
-}
-
 // GetString will perform getValue() but cast to a string if found
 //
 // Returns an empty string if not found
@@ -115,7 +106,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 
 	// Set the base url and path
 	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias[network]
-	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s%s", target, port, DefaultServiceName, c.options.network.URLSuffix())
+	reqURL := fmt.Sprintf("https://%s/.well-known/%s%s", net.JoinHostPort(target, fmt.Sprintf("%d", port)), DefaultServiceName, c.options.network.URLSuffix())
 
 	// Fire the GET request
 	var resp StandardResponse
@@ -143,7 +134,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 		if strings.Contains(err.Error(), "invalid character") {
 
 			// Replace any invalid quotes
-			bodyString := strings.Replace(strings.Replace(string(resp.Body), `“`, `"`, -1), `”`, `"`, -1)
+			bodyString := strings.ReplaceAll(strings.ReplaceAll(string(resp.Body), `"`, `"`), `"`, `"`)
 
 			// Parse again after fixing quotes
 			if err = json.Unmarshal([]byte(bodyString), &response); err != nil {
@@ -164,9 +155,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	}
 
 	// Parse PIKE capability
-	if err = parsePikeCapability(response); err != nil {
-		return response, err
-	}
+	parsePikeCapability(response)
 
 	return response, err
 }
@@ -187,8 +176,20 @@ func (c *CapabilitiesPayload) ExtractPikeInviteURL() string {
 	return ""
 }
 
+// getValue will return the value (if found) from the capability (url or bool)
+//
+// Alternate is used for IE: pki (it breaks convention of using the BRFC ID)
+func (c *CapabilitiesPayload) getValue(brfcID, alternateID string) (bool, interface{}) {
+	for key, val := range c.Capabilities {
+		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
+			return true, val
+		}
+	}
+	return false, nil
+}
+
 // parsePikeCapability parses the PIKE capability from the capabilities response
-func parsePikeCapability(response *CapabilitiesResponse) error {
+func parsePikeCapability(response *CapabilitiesResponse) {
 	if pike, ok := response.Capabilities[BRFCPike].(map[string]interface{}); ok {
 		response.Pike = &PikeCapability{}
 
@@ -201,5 +202,4 @@ func parsePikeCapability(response *CapabilitiesResponse) error {
 			response.Pike.Outputs = &outputsStr
 		}
 	}
-	return nil
 }

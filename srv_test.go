@@ -286,7 +286,7 @@ func ExampleClient_ValidateSRVRecord() {
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 	}
-	// Output:error: srv priority 1 does not match 10
+	// Output:error: srv priority 1 does not match 10: srv priority does not match
 }
 
 // BenchmarkClient_ValidateSRVRecord benchmarks the method ValidateSRVRecord()

@@ -24,7 +24,7 @@ func verifyMerkleRoots(ctx context.Context, dBeef *beef.DecodedBEEF, provider Me
 }
 
 func getMerkleRootsVerificationRequests(bumps beef.BUMPs) ([]*MerkleRootConfirmationRequestItem, error) {
-	var reqItems []*MerkleRootConfirmationRequestItem
+	reqItems := make([]*MerkleRootConfirmationRequestItem, 0, len(bumps))
 
 	for _, bump := range bumps {
 		merkleRoot, err := bump.CalculateMerkleRoot()

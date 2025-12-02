@@ -2,9 +2,29 @@ package paymail
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"strings"
+)
+
+var (
+	// ErrSRVInvalidDomainName is returned when domain name is invalid
+	ErrSRVInvalidDomainName = errors.New("invalid parameter: domainName")
+	// ErrSRVInvalidCNAME is returned when CNAME is invalid
+	ErrSRVInvalidCNAME = errors.New("srv cname was invalid or not found")
+	// ErrSRVMissing is returned when SRV is missing or nil
+	ErrSRVMissing = errors.New("invalid parameter: srv is missing or nil")
+	// ErrSRVTargetInvalid is returned when SRV target is invalid or empty
+	ErrSRVTargetInvalid = errors.New("srv target is invalid or empty")
+	// ErrSRVPortMismatch is returned when SRV port does not match expected
+	ErrSRVPortMismatch = errors.New("srv port does not match")
+	// ErrSRVPriorityMismatch is returned when SRV priority does not match expected
+	ErrSRVPriorityMismatch = errors.New("srv priority does not match")
+	// ErrSRVWeightMismatch is returned when SRV weight does not match expected
+	ErrSRVWeightMismatch = errors.New("srv weight does not match")
+	// ErrSRVTargetNoHost is returned when SRV target could not resolve a host
+	ErrSRVTargetNoHost = errors.New("srv target could not resolve a host")
 )
 
 // defaultResolver will return a custom dns resolver
@@ -37,7 +57,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 		protocol = DefaultProtocol
 	}
 	if len(domainName) == 0 || len(domainName) > 255 {
-		err = fmt.Errorf("invalid parameter: domainName")
+		err = ErrSRVInvalidDomainName
 		return srv, err
 	}
 
@@ -54,8 +74,8 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 		context.Background(), service, protocol, domainName,
 	); err != nil || len(records) == 0 {
 		// @rohenaz: Paymail spec says if SRV record doesn't exist, assume it is <domain>.<tld> and port of 443
-		err = nil          // Hack
-		cname = cnameCheck // Hack
+		err = nil
+		cname = cnameCheck
 		records = append(records, &net.SRV{
 			Port:     DefaultPort,
 			Priority: DefaultPriority,
@@ -67,8 +87,8 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Basic CNAME check (sanity check!)
 	if cname != cnameCheck {
 		err = fmt.Errorf(
-			"srv cname was invalid or not found using: %s and expected: %s",
-			cnameCheck, cname,
+			"using: %s and expected: %s: %w",
+			cnameCheck, cname, ErrSRVInvalidCNAME,
 		)
 		return srv, err
 	}
@@ -88,7 +108,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, priority, weight uint16) error {
 	// Check the parameters
 	if srv == nil {
-		return fmt.Errorf("invalid parameter: srv is missing or nil")
+		return ErrSRVMissing
 	}
 	if port <= 0 { // Use the default(s) from paymail specs
 		port = uint16(DefaultPort)
@@ -102,20 +122,20 @@ func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, prio
 
 	// Check the basics of the SRV record
 	if len(srv.Target) == 0 {
-		return fmt.Errorf("srv target is invalid or empty")
+		return ErrSRVTargetInvalid
 	} else if srv.Port != port {
-		return fmt.Errorf("srv port %d does not match %d", srv.Port, port)
+		return fmt.Errorf("srv port %d does not match %d: %w", srv.Port, port, ErrSRVPortMismatch)
 	} else if srv.Priority != priority {
-		return fmt.Errorf("srv priority %d does not match %d", srv.Priority, priority)
+		return fmt.Errorf("srv priority %d does not match %d: %w", srv.Priority, priority, ErrSRVPriorityMismatch)
 	} else if srv.Weight != weight {
-		return fmt.Errorf("srv weight %d does not match %d", srv.Weight, weight)
+		return fmt.Errorf("srv weight %d does not match %d: %w", srv.Weight, weight, ErrSRVWeightMismatch)
 	}
 
 	// Test resolving the target
 	if addresses, err := c.resolver.LookupHost(ctx, srv.Target); err != nil {
 		return err
 	} else if len(addresses) == 0 {
-		return fmt.Errorf("srv target %s could not resolve a host", srv.Target)
+		return fmt.Errorf("target %s: %w", srv.Target, ErrSRVTargetNoHost)
 	}
 
 	return nil

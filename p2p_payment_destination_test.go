@@ -163,7 +163,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}

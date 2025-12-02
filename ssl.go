@@ -23,20 +23,20 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 		for _, ip := range ips {
 
 			// Set the dialer
-			dialer := net.Dialer{
-				Timeout:  c.options.sslTimeout,
-				Deadline: time.Now().Add(c.options.sslDeadline),
+			dialer := &tls.Dialer{
+				NetDialer: &net.Dialer{
+					Timeout:  c.options.sslTimeout,
+					Deadline: time.Now().Add(c.options.sslDeadline),
+				},
+				Config: &tls.Config{
+					ServerName: host,
+					MinVersion: tls.VersionTLS12,
+				},
 			}
 
 			// Set the connection
-			connection, dialErr := tls.DialWithDialer(
-				&dialer,
-				DefaultProtocol,
-				fmt.Sprintf("[%s]:%d", ip.String(), DefaultPort),
-				&tls.Config{
-					ServerName: host,
-				},
-			)
+			ctx := context.Background()
+			conn, dialErr := dialer.DialContext(ctx, DefaultProtocol, fmt.Sprintf("[%s]:%d", ip.String(), DefaultPort))
 			if dialErr != nil {
 				// catch missing ipv6 connectivity
 				// if the ip is ipv6 and the resulting error is "no route to host", the record is skipped
@@ -62,7 +62,8 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 			// loop to all certs we get
 			// there might be multiple chains, as there may be one or more CAs present on the current system,
 			// so we have multiple possible chains
-			for _, chain := range connection.ConnectionState().VerifiedChains {
+			tlsConn := conn.(*tls.Conn)
+			for _, chain := range tlsConn.ConnectionState().VerifiedChains {
 				for _, cert := range chain {
 					if _, checked := checkedCerts[string(cert.Signature)]; checked {
 						continue
@@ -82,7 +83,7 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 					}
 				}
 			}
-			_ = connection.Close()
+			_ = conn.Close()
 		}
 	}
 

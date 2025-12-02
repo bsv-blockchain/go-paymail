@@ -2,8 +2,9 @@ package paymail
 
 // All BRFC IDs that have been used/referenced in the library
 const (
-	BRFCBasicAddressResolution         = "759684b1a19a"       // more info: http://bsvalias.org/04-01-basic-address-resolution.html
-	BRFCP2PPaymentDestination          = "2a40af698840"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-07-p2p-payment-destination.html
+	BRFCBasicAddressResolution = "759684b1a19a" // more info: http://bsvalias.org/04-01-basic-address-resolution.html
+	BRFCP2PPaymentDestination  = "2a40af698840" // more info: https://docs.moneybutton.com/docs/paymail/paymail-07-p2p-payment-destination.html
+	//nolint:gosec // G101: This is a BRFC ID, not a credential
 	BRFCP2PPaymentDestinationWithToken = "f792b6eff07a"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-11-p2p-payment-destination-tokens.html
 	BRFCP2PTransactions                = "5f1323cddf31"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-06-p2p-transactions.html
 	BRFCPaymentDestination             = "paymentDestination" // more info: http://bsvalias.org/04-01-basic-address-resolution.html
@@ -14,7 +15,7 @@ const (
 	BRFCReceiverApprovals              = "3d7c2ca83a46"       // more info: http://bsvalias.org/04-03-receiver-approvals.html
 	BRFCSenderValidation               = "6745385c3fc0"       // more info: http://bsvalias.org/04-02-sender-validation.html
 	BRFCSFPAssetInformation            = "1300361cb2d4"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-08-asset-information.html
-	BRFCSFPAuthoriseAction             = "95dddb461bff"       // more info: https://docs.moneybutton.com/docs/sfp/paymail-10-sfp-authorise.html
+	BRFCSFPAuthoriseAction             = "736699033ec8"       // more info: https://docs.moneybutton.com/docs/sfp/paymail-10-sfp-authorise.html
 	BRFCSFPBuildAction                 = "189e32d93d28"       // more info: https://docs.moneybutton.com/docs/sfp/paymail-09-sfp-build.html
 	BRFCVerifyPublicKeyOwner           = "a9f510c16bde"       // more info: http://bsvalias.org/05-verify-public-key-owner.html
 	BRFCBeefTransaction                = "5c55a7fdb7bb"       // more info: https://bsv.brc.dev/payments/0070
@@ -181,8 +182,8 @@ const BRFCKnownSpecifications = `
   },
   {
    "author": "Fabriik",
-   "id": "95dddb461bff",
-   "title": "Simple Fabriik Protocol for Tokens Authorise Action",
+   "id": "736699033ec8",
+   "title": "Simple Fabriik Protocol for Tokens Authorize Action",
    "url": "https://docs.moneybutton.com/docs/sfp/paymail-10-sfp-authorise.html",
    "version": "1"
   },

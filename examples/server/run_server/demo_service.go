@@ -24,6 +24,8 @@ var (
 	ErrDemoInvalidSignature = errors.New("invalid signature")
 	// ErrDemoFailedCreatePaymail is returned when failed to create paymail address in database
 	ErrDemoFailedCreatePaymail = errors.New("failed to create paymail address in demo database")
+	// ErrDemoAddressNotFound is returned when paymail address is not found
+	ErrDemoAddressNotFound = errors.New("address not found")
 )
 
 // paymailAddressTable is the demo data for the example server (table: paymail_address)
@@ -62,8 +64,7 @@ func InitDemoDatabase() error {
 }
 
 // generateDemoPaymail will make a new row in the demo database
-//
-// NOTE: creates a private key and pubkey
+// This function creates a private key and pubkey
 func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
 	// Start a row
 	row := &paymail.AddressInformation{
@@ -102,7 +103,7 @@ func DemoGetPaymailByAlias(alias, domain string) (*paymail.AddressInformation, e
 			return demoPaymailAddressTable[i], nil
 		}
 	}
-	return nil, nil
+	return nil, ErrDemoAddressNotFound
 }
 
 // DemoCreateAddressResolutionResponse will create a new destination for the address resolution
@@ -126,14 +127,14 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 
 	privateKeyFromHex, err := ec.PrivateKeyFromHex(p.PrivateKey)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDemoUnableDecodePrivateKey, err)
+		return nil, fmt.Errorf("unable to decode private key: %w", err)
 	}
 
 	// Create a signature of output if senderValidation is enabled
 	if senderValidation {
 		sigBytes, err := bsm.SignMessage(privateKeyFromHex, ls.Bytes())
 		if err != nil {
-			return nil, fmt.Errorf("%w: %v", ErrDemoInvalidSignature, err)
+			return nil, fmt.Errorf("invalid signature: %w", err)
 		}
 		response.Signature = paymail.EncodeSignature(sigBytes)
 	}

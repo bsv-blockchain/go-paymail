@@ -22,12 +22,12 @@ func TestNetwork_String(t *testing.T) {
 // TestNetwork_PaymailURLSuffix will test the method URLSuffix()
 func TestNetwork_PaymailURLSuffix(t *testing.T) {
 	t.Run("valid networks", func(t *testing.T) {
-		assert.Equal(t, "", Mainnet.URLSuffix())
+		assert.Empty(t, Mainnet.URLSuffix())
 		assert.Equal(t, "-testnet", Testnet.URLSuffix())
 		assert.Equal(t, "-stn", STN.URLSuffix())
 	})
 	t.Run("invalid network", func(t *testing.T) {
 		b := new(Network)
-		assert.Equal(t, "", b.URLSuffix())
+		assert.Empty(t, b.URLSuffix())
 	})
 }

@@ -1,6 +1,7 @@
 package paymail
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -12,6 +13,16 @@ var (
 	emailRegExp    = regexp.MustCompile(`[^a-zA-Z0-9-_.@+]`)
 	pathNameRegExp = regexp.MustCompile(`[^a-zA-Z0-9-_]`)
 	portRegExp     = regexp.MustCompile(`:\d*$`)
+	// ErrPaymailFormatInvalid is returned when paymail address format is invalid
+	ErrPaymailFormatInvalid = errors.New("paymail address failed format validation")
+	// ErrDomainInvalid is returned when domain is invalid
+	ErrDomainInvalid = errors.New("domain name is invalid")
+	// ErrDomainHostCheckFailed is returned when domain host check failed
+	ErrDomainHostCheckFailed = errors.New("domain name failed host check")
+	// ErrTimestampInPast is returned when timestamp is in the past
+	ErrTimestampInPast = errors.New("timestamp is in the past")
+	// ErrTimestampInFuture is returned when timestamp is in the future
+	ErrTimestampInFuture = errors.New("timestamp is in the future")
 )
 
 // SanitisedPaymail contains elements of a sanitized paymail address.
@@ -74,7 +85,7 @@ func ValidatePaymail(paymailAddress string) error {
 
 	// Validate the format for the paymail address (paymail addresses follow conventional email requirements)
 	if !isValid {
-		return fmt.Errorf("paymail address failed format validation: %s", paymailAddress)
+		return fmt.Errorf("%w: %s", ErrPaymailFormatInvalid, paymailAddress)
 	}
 
 	return nil
@@ -87,9 +98,9 @@ func ValidatePaymail(paymailAddress string) error {
 func ValidateDomain(domain string) error {
 	// Check for a real domain (require at least one period)
 	if !strings.Contains(domain, ".") {
-		return fmt.Errorf("domain name is invalid: %s", domain)
+		return fmt.Errorf("%w: %s", ErrDomainInvalid, domain)
 	} else if !IsValidHost(domain) { // Basic DNS check (not a REAL domain name check)
-		return fmt.Errorf("domain name failed host check: %s", domain)
+		return fmt.Errorf("%w: %s", ErrDomainHostCheckFailed, domain)
 	}
 
 	return nil
@@ -102,11 +113,11 @@ func ValidateDomain(domain string) error {
 func ConvertHandle(handle string, isBeta bool) string {
 	if strings.HasPrefix(handle, "$") {
 		if isBeta {
-			return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@beta.handcash.io"
+			return strings.ToLower(strings.ReplaceAll(handle, "$", "")) + "@beta.handcash.io"
 		}
-		return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@handcash.io"
+		return strings.ToLower(strings.ReplaceAll(handle, "$", "")) + "@handcash.io"
 	} else if strings.HasPrefix(handle, "1") && len(handle) < 25 && !strings.Contains(handle, "@") {
-		return strings.ToLower(strings.Replace(handle, "1", "", -1)) + "@relayx.io"
+		return strings.ToLower(strings.ReplaceAll(handle, "1", "")) + "@relayx.io"
 	}
 	return handle
 }
@@ -125,9 +136,9 @@ func ValidateTimestamp(timestamp string) error {
 	// Timestamp cannot be more than 2 minutes in the past
 	// Specs: http://bsvalias.org/04-02-sender-validation.html
 	if dt.Before(time.Now().UTC().Add(-2 * time.Minute)) {
-		return fmt.Errorf("timestamp: %s is in the past", timestamp)
+		return fmt.Errorf("timestamp %s: %w", timestamp, ErrTimestampInPast)
 	} else if dt.After(time.Now().UTC().Add(2 * time.Minute)) {
-		return fmt.Errorf("timestamp: %s is in the future", timestamp)
+		return fmt.Errorf("timestamp %s: %w", timestamp, ErrTimestampInFuture)
 	}
 
 	return nil
@@ -172,7 +183,7 @@ func removePort(host string) string {
 // Result:  johndoe@gmail
 func SanitizeEmail(original string) string {
 	original = strings.ToLower(original)
-	original = strings.Replace(original, "mailto:", "", -1)
+	original = strings.ReplaceAll(original, "mailto:", "")
 	original = strings.TrimSpace(original)
 
 	return emailRegExp.ReplaceAllString(original, "")

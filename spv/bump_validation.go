@@ -56,6 +56,7 @@ func findMinedAncestorsForInput(input *sdk.TransactionInput, ancestors []*beef.T
 }
 
 func existsInBumps(tx *beef.TxData, bumps beef.BUMPs) bool {
+	//nolint:gosec // G115: safe conversion, BumpIndex is from parsed BEEF format
 	bumpIdx := int(*tx.BumpIndex)
 	txID := tx.GetTxID()
 
