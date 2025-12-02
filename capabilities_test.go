@@ -259,7 +259,7 @@ func mockCapabilitiesNetwork(statusCode int, n Network) {
 	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.URLSuffix(),
 		httpmock.NewStringResponder(
 			statusCode,
-			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": 
+			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities":
 {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}",
 "paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),

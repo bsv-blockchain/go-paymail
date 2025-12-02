@@ -46,7 +46,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/bsv-blockchain/
     - [P2P Payment Destination](p2p_payment_destination.go)
     - [P2P Send Transaction](p2p_send_transaction.go)
 - [Paymail Server](server) (basic example for hosting your own paymail server)
-    - [Example Showing Capabilities](server/capabilities.go) 
+    - [Example Showing Capabilities](server/capabilities.go)
     - [Example Showing PKI](server/pki.go)
     - [Example Verifying a PubKey](server/verify.go)
     - [Example Address Resolution](server/resolve_address.go)
@@ -55,7 +55,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/bsv-blockchain/
 - [Paymail Utilities](utilities.go) (handy methods)
     - [Sanitize & Validate Paymail Addresses](utilities.go)
     - [Sign & Verify Sender Request](sender_request.go)
-    
+
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
 <br/>
