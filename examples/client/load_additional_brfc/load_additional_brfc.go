@@ -13,5 +13,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("error loading client: %s", err.Error())
 	}
-
 }

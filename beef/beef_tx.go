@@ -26,9 +26,40 @@ const (
 	maxTreeHeight     = 64
 )
 
+var (
+	// ErrBeefNoBytesForBump is returned when there are no bytes to decode BUMP
+	ErrBeefNoBytesForBump = errors.New("cannot decode BUMP - no bytes provided")
+	// ErrBeefNoLowestBump is returned when BEEF lacks BUMPs
+	ErrBeefNoLowestBump = errors.New("invalid BEEF- lack of BUMPs")
+	// ErrBeefInsufficientBytesBlockHeight is returned when there are insufficient bytes for BUMP blockHeight
+	ErrBeefInsufficientBytesBlockHeight = errors.New("insufficient bytes to extract BUMP blockHeight")
+	// ErrBeefInvalidTreeHeight is returned when treeHeight is invalid
+	ErrBeefInvalidTreeHeight = errors.New("invalid BEEF - treeHeight cannot be grater than maxTreeHeight")
+	// ErrBeefNoBytesForPaths is returned when there are no bytes for BUMP paths
+	ErrBeefNoBytesForPaths = errors.New("cannot decode BUMP paths number of leaves from stream - no bytes provided")
+	// ErrBeefInsufficientBytesHash is returned when there are insufficient bytes for hash
+	ErrBeefInsufficientBytesHash = errors.New("insufficient bytes to extract hash of path")
+	// ErrBeefInsufficientTransactions is returned when there are insufficient transactions
+	ErrBeefInsufficientTransactions = errors.New("invalid BEEF- not enough transactions provided to decode BEEF")
+	// ErrBeefInvalidHexStream is returned when BEEF hex stream is invalid
+	ErrBeefInvalidHexStream = errors.New("invalid beef hex stream")
+	// ErrBeefInvalidMarker is returned when BEEF marker is not found
+	ErrBeefInvalidMarker = errors.New("invalid format of transaction, BEEF marker not found")
+	// ErrBeefInvalidTreeHeightMax is returned when treeHeight is greater than 64
+	ErrBeefInvalidTreeHeightMax = errors.New("invalid BEEF - treeHeight cannot be grater than 64")
+	// ErrBeefInsufficientBytesOffset is returned when there are insufficient bytes to extract offset
+	ErrBeefInsufficientBytesOffset = errors.New("insufficient bytes to extract offset")
+	// ErrBeefInsufficientBytesFlag is returned when there are insufficient bytes to extract flag
+	ErrBeefInsufficientBytesFlag = errors.New("insufficient bytes to extract flag")
+	// ErrBeefInvalidFlag is returned when flag is invalid
+	ErrBeefInvalidFlag = errors.New("invalid flag")
+	// ErrBeefInvalidHasCMPFlag is returned when HasCMP flag is invalid
+	ErrBeefInvalidHasCMPFlag = errors.New("invalid HasCMP flag for transaction")
+)
+
 type TxData struct {
-	Transaction *sdk.Transaction
-	BumpIndex   *sdk.VarInt
+	Transaction *sdk.Transaction `json:"transaction"`
+	BumpIndex   *sdk.VarInt      `json:"bumpIndex"`
 
 	txID string
 }
@@ -46,8 +77,8 @@ func (td *TxData) GetTxID() string {
 }
 
 type DecodedBEEF struct {
-	BUMPs        BUMPs
-	Transactions []*TxData
+	BUMPs        BUMPs     `json:"bumps"`
+	Transactions []*TxData `json:"transactions"`
 }
 
 func DecodeBEEF(beefHex string) (*DecodedBEEF, error) {
@@ -78,13 +109,13 @@ func (d *DecodedBEEF) GetLatestTx() *sdk.Transaction {
 
 func decodeBUMPs(beefBytes []byte) ([]*BUMP, []byte, error) {
 	if len(beefBytes) == 0 {
-		return nil, nil, errors.New("cannot decode BUMP - no bytes provided")
+		return nil, nil, ErrBeefNoBytesForBump
 	}
 
 	nBump, bytesUsed := sdk.NewVarIntFromBytes(beefBytes)
 
 	if nBump == 0 {
-		return nil, nil, errors.New("invalid BEEF- lack of BUMPs")
+		return nil, nil, ErrBeefNoLowestBump
 	}
 
 	beefBytes = beefBytes[bytesUsed:]
@@ -92,14 +123,14 @@ func decodeBUMPs(beefBytes []byte) ([]*BUMP, []byte, error) {
 	bumps := make([]*BUMP, 0, uint64(nBump))
 	for i := uint64(0); i < uint64(nBump); i++ {
 		if len(beefBytes) == 0 {
-			return nil, nil, errors.New("insufficient bytes to extract BUMP blockHeight")
+			return nil, nil, ErrBeefInsufficientBytesBlockHeight
 		}
 		blockHeight, bytesUsed := sdk.NewVarIntFromBytes(beefBytes)
 		beefBytes = beefBytes[bytesUsed:]
 
 		treeHeight := beefBytes[0]
 		if int(treeHeight) > maxTreeHeight {
-			return nil, nil, fmt.Errorf("invalid BEEF - treeHeight cannot be grater than %d", maxTreeHeight)
+			return nil, nil, fmt.Errorf("treeHeight: %d: %w", treeHeight, ErrBeefInvalidTreeHeight)
 		}
 		beefBytes = beefBytes[1:]
 
@@ -125,7 +156,7 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 
 	for i := 0; i < treeHeight; i++ {
 		if len(hexBytes) == 0 {
-			return nil, nil, errors.New("cannot decode BUMP paths number of leaves from stream - no bytes provided")
+			return nil, nil, ErrBeefNoBytesForPaths
 		}
 		nLeaves, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
@@ -142,23 +173,25 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 
 func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
 	bumpPath := make([]BUMPLeaf, 0)
+	//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
 	for i := 0; i < int(nLeaves); i++ {
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("insufficient bytes to extract offset for %d leaf of %d leaves", i, int(nLeaves))
+			//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesOffset)
 		}
 
 		offset, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
 
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("insufficient bytes to extract flag for %d leaf of %d leaves", i, int(nLeaves))
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesFlag)
 		}
 
 		flag := hexBytes[0]
 		hexBytes = hexBytes[1:]
 
 		if flag != dataFlag && flag != duplicateFlag && flag != txIDFlag {
-			return nil, nil, fmt.Errorf("invalid flag: %d for %d leaf of %d leaves", flag, i, int(nLeaves))
+			return nil, nil, fmt.Errorf("flag %d for leaf %d of %d: %w", flag, i, int(nLeaves), ErrBeefInvalidFlag)
 		}
 
 		if flag == duplicateFlag {
@@ -171,7 +204,7 @@ func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, e
 		}
 
 		if len(hexBytes) < hashBytesCount {
-			return nil, nil, errors.New("insufficient bytes to extract hash of path")
+			return nil, nil, ErrBeefInsufficientBytesHash
 		}
 
 		hash := hex.EncodeToString(util.ReverseBytes(hexBytes[:hashBytesCount]))
@@ -194,13 +227,15 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 	nTransactions, offset := sdk.NewVarIntFromBytes(bytes)
 
 	if nTransactions < 2 {
-		return nil, errors.New("invalid BEEF- not enough transactions provided to decode BEEF")
+		return nil, ErrBeefInsufficientTransactions
 	}
 
 	bytes = bytes[offset:]
 
+	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	transactions := make([]*TxData, 0, int(nTransactions))
 
+	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	for i := 0; i < int(nTransactions); i++ {
 		tx, offset, err := sdk.NewTransactionFromStream(bytes)
 		if err != nil {
@@ -210,14 +245,15 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 
 		var pathIndex *sdk.VarInt
 
-		if bytes[0] == HasBump {
+		switch bytes[0] {
+		case HasBump:
 			value, offset := sdk.NewVarIntFromBytes(bytes[1:])
 			pathIndex = &value
 			bytes = bytes[1+offset:]
-		} else if bytes[0] == HasNoBump {
+		case HasNoBump:
 			bytes = bytes[1:]
-		} else {
-			return nil, fmt.Errorf("invalid HasCMP flag for transaction at index %d", i)
+		default:
+			return nil, fmt.Errorf("transaction at index %d: %w", i, ErrBeefInvalidHasCMPFlag)
 		}
 
 		transactions = append(transactions, &TxData{
@@ -232,10 +268,10 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 func extractBytesWithoutVersionAndMarker(hexStream string) ([]byte, error) {
 	bytes, err := hex.DecodeString(hexStream)
 	if err != nil {
-		return nil, errors.New("invalid beef hex stream")
+		return nil, ErrBeefInvalidHexStream
 	}
 	if len(bytes) < 4 {
-		return nil, errors.New("invalid beef hex stream")
+		return nil, ErrBeefInvalidHexStream
 	}
 
 	// removes version bytes
@@ -253,7 +289,7 @@ func extractBytesWithoutVersionAndMarker(hexStream string) ([]byte, error) {
 
 func validateMarker(bytes []byte) error {
 	if bytes[0] != BEEFMarkerPart1 || bytes[1] != BEEFMarkerPart2 {
-		return errors.New("invalid format of transaction, BEEF marker not found")
+		return ErrBeefInvalidMarker
 	}
 
 	return nil

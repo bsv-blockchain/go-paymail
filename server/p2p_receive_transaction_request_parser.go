@@ -4,16 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
-
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 func parseP2pReceiveTxRequest(c *Configuration, req *http.Request, incomingPaymail string, format p2pPayloadFormat) (*p2pReceiveTxReqPayload, error) {
 	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
 	if len(paymailAddress) == 0 {
 		return nil, errors.ErrInvalidPaymail
-
 	} else if !c.IsAllowedDomain(domain) {
 		return nil, errors.ErrDomainUnknown
 	}
@@ -31,11 +29,12 @@ func parseP2pReceiveTxRequest(c *Configuration, req *http.Request, incomingPayma
 	if len(p2pTransaction.Reference) == 0 {
 		return nil, errors.ErrMissingFieldReference
 	}
-	if format == basicP2pPayload {
+	switch format {
+	case basicP2pPayload:
 		if len(p2pTransaction.Hex) == 0 {
 			return nil, errors.ErrMissingFieldHex
 		}
-	} else if format == beefP2pPayload {
+	case beefP2pPayload:
 		if len(p2pTransaction.Beef) == 0 {
 			return nil, errors.ErrMissingFieldBEEF
 		}

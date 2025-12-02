@@ -17,8 +17,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 	client := newTestClient(t)
 
 	t.Run("valid cases", func(t *testing.T) {
-
-		var tests = []struct {
+		tests := []struct {
 			name             string
 			service          string
 			protocol         string
@@ -73,8 +72,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 	})
 
 	t.Run("invalid cases", func(t *testing.T) {
-
-		var tests = []struct {
+		tests := []struct {
 			name       string
 			service    string
 			protocol   string
@@ -119,7 +117,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 	client := newTestClient(t)
 
 	t.Run("valid cases", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			name     string
 			srv      *net.SRV
 			port     uint16
@@ -160,7 +158,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 	})
 
 	t.Run("invalid cases", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			name     string
 			srv      *net.SRV
 			port     uint16
@@ -288,7 +286,7 @@ func ExampleClient_ValidateSRVRecord() {
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 	}
-	// Output:error: srv priority 1 does not match 10
+	// Output:error: srv priority 1 does not match 10: srv priority does not match
 }
 
 // BenchmarkClient_ValidateSRVRecord benchmarks the method ValidateSRVRecord()

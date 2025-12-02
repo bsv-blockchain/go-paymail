@@ -3,10 +3,10 @@ package server
 import (
 	"net/http"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 // showPKI will return the public key information for the corresponding paymail address

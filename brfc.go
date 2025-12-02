@@ -4,8 +4,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
+)
+
+var (
+	// ErrBRFCInvalid is returned when a BRFC specification is invalid
+	ErrBRFCInvalid = errors.New("brfc is invalid")
+	// ErrBRFCTitleInvalid is returned when a BRFC title is invalid
+	ErrBRFCTitleInvalid = errors.New("invalid brfc title, length: 0")
 )
 
 // BRFCSpec is a full BRFC specification document
@@ -27,7 +35,6 @@ type BRFCSpec struct {
 // additionSpecifications is appended to the default specs
 // BRFCKnownSpecifications is a local constant of JSON to preload known BRFC ids
 func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
-
 	// Load the default specs
 	specs := make([]*BRFCSpec, 0)
 	if err := json.Unmarshal(
@@ -57,7 +64,7 @@ func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
 		if valid, id, err := spec.Validate(); err != nil {
 			return nil, err
 		} else if !valid {
-			return nil, fmt.Errorf("brfc: [%s] is invalid - id returned: %s vs %s", spec.Title, id, spec.ID)
+			return nil, fmt.Errorf("brfc: [%s] - id returned: %s vs %s: %w", spec.Title, id, spec.ID, ErrBRFCInvalid)
 		}
 
 		// Add to existing list
@@ -71,11 +78,10 @@ func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
 //
 // See more: http://bsvalias.org/01-02-brfc-id-assignment.html
 func (b *BRFCSpec) Generate() error {
-
 	// Validate the title (only required field)
 	if len(b.Title) == 0 {
 		b.ID = ""
-		return fmt.Errorf("invalid brfc title, length: 0")
+		return ErrBRFCTitleInvalid
 	}
 
 	// Start a new SHA256 hash
@@ -122,7 +128,6 @@ func (b *BRFCSpec) Generate() error {
 // Returns the ID that was generated to compare against the existing id
 // Returns valid bool for convenience, but also sets b.Valid = true
 func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
-
 	// Copy and generate (copying ensures that running Generate() will not override the existing ID)
 	tempBRFC := new(BRFCSpec)
 	*tempBRFC = *b
@@ -132,7 +137,7 @@ func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
 
 	// Run the generate method to return an ID
 	if err = tempBRFC.Generate(); err != nil {
-		return
+		return valid, id, err
 	}
 
 	// Set the ID generated (for external comparison etc.)
@@ -144,5 +149,5 @@ func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
 		b.Valid = valid
 	}
 
-	return
+	return valid, id, err
 }

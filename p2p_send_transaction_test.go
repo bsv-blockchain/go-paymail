@@ -40,8 +40,8 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, client)
 	assert.Equal(t, http.StatusOK, transaction.StatusCode)
-	assert.NotEqual(t, 0, len(transaction.TxID))
-	assert.NotEqual(t, 0, len(transaction.Note))
+	assert.NotEmpty(t, transaction.TxID)
+	assert.NotEmpty(t, transaction.Note)
 }
 
 // ExampleClient_SendP2PTransaction example using SendP2PTransaction()
@@ -60,7 +60,8 @@ func ExampleClient_SendP2PTransaction() {
 	rawTransaction := &P2PTransaction{
 		Hex:       "some-raw-hex",
 		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
-		Reference: "1234567"}
+		Reference: "1234567",
+	}
 
 	// Fire the request
 	transaction, err := client.SendP2PTransaction(
@@ -113,7 +114,8 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 	rawTransaction := &P2PTransaction{
 		Hex:       "some-raw-hex",
 		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
-		Reference: "1234567"}
+		Reference: "1234567",
+	}
 
 	// Fire the request
 	transaction, err := client.SendP2PTransaction(
@@ -290,7 +292,7 @@ func TestClient_SendP2PTransactionStatusHTTPError(t *testing.T) {
 	// Create mock response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/"+testAlias+"@"+testDomain,
-		httpmock.NewErrorResponder(fmt.Errorf("error in request")))
+		httpmock.NewErrorResponder(ErrTestRequestFailed))
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
@@ -442,5 +444,5 @@ func TestClient_SendP2PTransactionStatusMissingTxID(t *testing.T) {
 	)
 	require.Error(t, err)
 	require.NotNil(t, transaction)
-	assert.Equal(t, 0, len(transaction.TxID))
+	assert.Empty(t, transaction.TxID)
 }

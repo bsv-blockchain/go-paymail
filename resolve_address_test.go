@@ -189,7 +189,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		senderRequest := &SenderRequest{
@@ -278,7 +278,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
-		assert.Equal(t, "", resolution.Output)
+		assert.Empty(t, resolution.Output)
 	})
 
 	t.Run("missing output", func(t *testing.T) {
@@ -304,7 +304,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
-		assert.Equal(t, "", resolution.Output)
+		assert.Empty(t, resolution.Output)
 	})
 
 	t.Run("invalid output", func(t *testing.T) {

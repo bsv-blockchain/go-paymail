@@ -20,7 +20,7 @@ func TestClient_CheckSSL(t *testing.T) {
 	client := newTestClient(t)
 
 	t.Run("valid ssl certs", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			host string
 		}{
 			{"google.com"},
@@ -30,13 +30,13 @@ func TestClient_CheckSSL(t *testing.T) {
 			t.Run("checking: "+test.host, func(t *testing.T) {
 				valid, err := client.CheckSSL(test.host)
 				require.NoError(t, err)
-				assert.Equal(t, true, valid)
+				assert.True(t, valid)
 			})
 		}
 	})
 
 	t.Run("invalid ssl certs", func(t *testing.T) {
-		var tests = []struct {
+		tests := []struct {
 			host string
 		}{
 			{"google"},
@@ -47,7 +47,7 @@ func TestClient_CheckSSL(t *testing.T) {
 			t.Run("checking: "+test.host, func(t *testing.T) {
 				valid, err := client.CheckSSL(test.host)
 				require.Error(t, err)
-				assert.Equal(t, false, valid)
+				assert.False(t, valid)
 			})
 		}
 	})

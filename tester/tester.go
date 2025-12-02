@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/bsv-blockchain/go-paymail/interfaces"
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
+
+	"github.com/bsv-blockchain/go-paymail/interfaces"
 )
 
 // Resolver for mocking requests
@@ -21,7 +22,8 @@ type Resolver struct {
 
 // NewCustomResolver will return a custom resolver with specific records hard coded ,
 func NewCustomResolver(liveResolver interfaces.DNSResolver, hosts map[string][]string,
-	srvRecords map[string][]*net.SRV, ipAddresses map[string][]net.IPAddr) interfaces.DNSResolver {
+	srvRecords map[string][]*net.SRV, ipAddresses map[string][]net.IPAddr,
+) interfaces.DNSResolver {
 	return &Resolver{
 		hosts:        hosts,
 		ipAddresses:  ipAddresses,
@@ -62,7 +64,6 @@ func (r *Resolver) LookupSRV(ctx context.Context, service, proto, name string) (
 
 // MockResty will return a mocked Resty client
 func MockResty() *resty.Client {
-
 	// Create a Resty Client
 	client := resty.New()
 

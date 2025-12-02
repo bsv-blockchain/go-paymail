@@ -3,8 +3,9 @@ package paymail
 import (
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/interfaces"
 	"github.com/go-resty/resty/v2"
+
+	"github.com/bsv-blockchain/go-paymail/interfaces"
 )
 
 // ClientOps allow functional options to be supplied
@@ -32,7 +33,7 @@ func defaultClientOptions() (opts *ClientOptions, err error) {
 
 	// Load the default BRFC specs
 	opts.brfcSpecs, err = LoadBRFCs("")
-	return
+	return opts, err
 }
 
 // WithDNSPort can be supplied with a custom dns port to perform SRV checks on.

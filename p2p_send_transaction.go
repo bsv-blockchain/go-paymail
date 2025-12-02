@@ -10,6 +10,27 @@ import (
 	"github.com/bsv-blockchain/go-paymail/beef"
 )
 
+var (
+	// ErrSendP2PInvalidURL is returned when P2P URL is invalid
+	ErrSendP2PInvalidURL = errors.New("invalid url")
+	// ErrSendP2PMissingAlias is returned when alias is missing
+	ErrSendP2PMissingAlias = errors.New("missing alias")
+	// ErrSendP2PMissingDomain is returned when domain is missing
+	ErrSendP2PMissingDomain = errors.New("missing domain")
+	// ErrSendP2PTransactionNil is returned when transaction is nil
+	ErrSendP2PTransactionNil = errors.New("transaction cannot be nil")
+	// ErrSendP2PBeefOrHexRequired is returned when neither beef nor hex is provided
+	ErrSendP2PBeefOrHexRequired = errors.New("beef or hex is required")
+	// ErrSendP2PReferenceRequired is returned when reference is required but missing
+	ErrSendP2PReferenceRequired = errors.New("reference is required")
+	// ErrSendP2PAddressNotFound is returned when paymail address is not found
+	ErrSendP2PAddressNotFound = errors.New("paymail address not found")
+	// ErrSendP2PBadResponse is returned when receiving bad response from paymail provider
+	ErrSendP2PBadResponse = errors.New("bad response from paymail provider")
+	// ErrSendP2PMissingTxID is returned when returned txid is missing
+	ErrSendP2PMissingTxID = errors.New("missing a returned txid")
+)
+
 /*
 Example:
 {
@@ -57,30 +78,30 @@ type P2PTransactionPayload struct {
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
 func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
-	transaction *P2PTransaction) (response *P2PTransactionResponse, err error) {
-
+	transaction *P2PTransaction,
+) (response *P2PTransactionResponse, err error) {
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
-		err = fmt.Errorf("invalid url: %s", p2pURL)
-		return
+		err = fmt.Errorf("%s: %s: %w", "invalid url", p2pURL, ErrSendP2PInvalidURL)
+		return response, err
 	} else if len(alias) == 0 {
-		err = errors.New("missing alias")
-		return
+		err = ErrSendP2PMissingAlias
+		return response, err
 	} else if len(domain) == 0 {
-		err = errors.New("missing domain")
-		return
+		err = ErrSendP2PMissingDomain
+		return response, err
 	}
 
 	// Basic requirements for request
 	if transaction == nil {
-		err = errors.New("transaction cannot be nil")
-		return
+		err = ErrSendP2PTransactionNil
+		return response, err
 	} else if len(transaction.Beef) == 0 && len(transaction.Hex) == 0 {
-		err = errors.New("beef or hex is required")
-		return
+		err = ErrSendP2PBeefOrHexRequired
+		return response, err
 	} else if len(transaction.Reference) == 0 {
-		err = errors.New("reference is required")
-		return
+		err = ErrSendP2PReferenceRequired
+		return response, err
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
@@ -91,7 +112,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 	// Fire the POST request
 	var resp StandardResponse
 	if resp, err = c.postRequest(reqURL, transaction); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -102,32 +123,32 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 
 		// Paymail address not found?
 		if response.StatusCode == http.StatusNotFound {
-			err = errors.New("paymail address not found")
+			err = ErrSendP2PAddressNotFound
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
-				return
+				return response, err
 			}
 			if len(serverError.Message) == 0 {
-				err = fmt.Errorf("bad response from paymail provider: code %d, body: %s", response.StatusCode, string(resp.Body))
+				err = fmt.Errorf("code %d, body: %s: %w", response.StatusCode, string(resp.Body), ErrSendP2PBadResponse)
 			} else {
-				err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
+				err = fmt.Errorf("code %d, message: %s: %w", response.StatusCode, serverError.Message, ErrSendP2PBadResponse)
 			}
 		}
 
-		return
+		return response, err
 	}
 
 	// Decode the body of the response
 	if err = json.Unmarshal(resp.Body, &response); err != nil {
-		return
+		return response, err
 	}
 
 	// Check for a TX ID
 	if len(response.TxID) == 0 {
-		err = errors.New("missing a returned txid")
-		return
+		err = ErrSendP2PMissingTxID
+		return response, err
 	}
 
-	return
+	return response, err
 }

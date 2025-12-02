@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 type CallableCapability struct {
@@ -18,9 +17,11 @@ type CallableCapability struct {
 	Handler gin.HandlerFunc
 }
 
-type NestedCapabilitiesMap map[string]CallableCapabilitiesMap
-type CallableCapabilitiesMap map[string]CallableCapability
-type StaticCapabilitiesMap map[string]any
+type (
+	NestedCapabilitiesMap   map[string]CallableCapabilitiesMap
+	CallableCapabilitiesMap map[string]CallableCapability
+	StaticCapabilitiesMap   map[string]any
+)
 
 func (c *Configuration) SetGenericCapabilities() {
 	_addCapabilities(c.callableCapabilities,
@@ -111,13 +112,13 @@ func (c *Configuration) SetPikePaymentCapabilities() {
 	)
 }
 
-func _addCapabilities[T any](base map[string]T, newCaps map[string]T) {
+func _addCapabilities[T any](base, newCaps map[string]T) {
 	for key, val := range newCaps {
 		base[key] = val
 	}
 }
 
-func _addNestedCapabilities(base NestedCapabilitiesMap, newCaps NestedCapabilitiesMap) {
+func _addNestedCapabilities(base, newCaps NestedCapabilitiesMap) {
 	for key, val := range newCaps {
 		if _, ok := base[key]; !ok {
 			base[key] = make(CallableCapabilitiesMap)
@@ -133,7 +134,7 @@ func _addNestedCapabilities(base NestedCapabilitiesMap, newCaps NestedCapabiliti
 func (c *Configuration) showCapabilities(context *gin.Context) {
 	// Check the host (allowed, and used for capabilities response)
 	// todo: bake this into middleware? This is protecting the "req" host name (like CORs)
-	host := ""
+	var host string
 	if context.Request.URL.IsAbs() || len(context.Request.URL.Host) == 0 {
 		host = context.Request.Host
 	} else {
@@ -168,7 +169,7 @@ func (c *Configuration) EnrichCapabilities(host string) (*paymail.CapabilitiesPa
 		payload.Capabilities[key] = cap
 	}
 	for key, cap := range c.callableCapabilities {
-		payload.Capabilities[key] = serviceUrl + string(cap.Path)
+		payload.Capabilities[key] = serviceUrl + cap.Path
 	}
 	for key, cap := range c.nestedCapabilities {
 		payload.Capabilities[key] = make(map[string]interface{})

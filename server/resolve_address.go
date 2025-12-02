@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
+	ec "github.com/bitcoin-sv/go-sdk/primitives/ec"
+	script "github.com/bitcoin-sv/go-sdk/script"
 	"github.com/gin-gonic/gin"
 
 	"github.com/bsv-blockchain/go-paymail"
-
-	ec "github.com/bitcoin-sv/go-sdk/primitives/ec"
-	script "github.com/bitcoin-sv/go-sdk/script"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 // TODO: bitcoin.PubKeyFromString -> PubKeyFromSignature?
@@ -133,7 +132,6 @@ func (c *Configuration) resolveAddress(context *gin.Context) {
 
 // getSenderPubKey will fetch the pubKey from a PKI request for the sender handle
 func getSenderPubKey(senderPaymailAddress string) (*ec.PublicKey, error) {
-
 	// Sanitize and break apart
 	alias, domain, _ := paymail.SanitizePaymail(senderPaymailAddress)
 

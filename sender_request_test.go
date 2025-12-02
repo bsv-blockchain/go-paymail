@@ -9,14 +9,14 @@ import (
 	primitives "github.com/bitcoin-sv/go-sdk/primitives/ec"
 	"github.com/bitcoin-sv/go-sdk/script"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestSenderRequest_Sign will test the method Sign()
 func TestSenderRequest_Sign(t *testing.T) {
-
 	// Create key
 	key, err := primitives.NewPrivateKey()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, key)
 
 	// Create the request / message
@@ -31,45 +31,45 @@ func TestSenderRequest_Sign(t *testing.T) {
 
 	t.Run("invalid key - empty", func(t *testing.T) {
 		sigBytes, err = senderRequest.Sign("")
-		assert.Error(t, err)
-		assert.Equal(t, len(sigBytes), 0)
+		require.Error(t, err)
+		assert.Empty(t, sigBytes)
 	})
 
 	t.Run("invalid key - 0", func(t *testing.T) {
 		sigBytes, err = senderRequest.Sign("0")
-		assert.Error(t, err)
-		assert.Equal(t, len(sigBytes), 0)
+		require.Error(t, err)
+		assert.Empty(t, sigBytes)
 	})
 
 	t.Run("invalid dt", func(t *testing.T) {
 		senderRequest.Dt = ""
 		sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
-		assert.Error(t, err)
-		assert.Equal(t, len(sigBytes), 0)
+		require.Error(t, err)
+		assert.Empty(t, sigBytes)
 	})
 
 	t.Run("invalid sender handle", func(t *testing.T) {
 		senderRequest.Dt = time.Now().UTC().Format(time.RFC3339)
 		senderRequest.SenderHandle = ""
 		sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
-		assert.Error(t, err)
-		assert.Equal(t, len(sigBytes), 0)
+		require.Error(t, err)
+		assert.Empty(t, sigBytes)
 	})
 
 	t.Run("valid signature", func(t *testing.T) {
 		senderRequest.SenderHandle = testAlias + "@" + testDomain
 		hexKey := hex.EncodeToString((key.Serialize()))
 		sigBytes, err = senderRequest.Sign(hexKey)
-		assert.NoError(t, err)
-		assert.NotEqual(t, len(sigBytes), 0)
+		require.NoError(t, err)
+		assert.NotEmpty(t, sigBytes)
 
 		// Get address for verification
 		address, err := script.NewAddressFromPublicKey(key.PubKey(), true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Verify the signature
 		err = senderRequest.Verify(address.AddressString, EncodeSignature(sigBytes))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -77,7 +77,6 @@ func TestSenderRequest_Sign(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleSenderRequest_Sign() {
-
 	// Test private key
 	key := "54035dd4c7dda99ac473905a3d82f7864322b49bab1ff441cc457183b9bd8abd"
 
@@ -106,7 +105,6 @@ func ExampleSenderRequest_Sign() {
 
 // BenchmarkSenderRequest_Sign benchmarks the method Sign()
 func BenchmarkSenderRequest_Sign(b *testing.B) {
-
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
@@ -122,10 +120,9 @@ func BenchmarkSenderRequest_Sign(b *testing.B) {
 
 // TestSenderRequest_Verify will test the method Verify()
 func TestSenderRequest_Verify(t *testing.T) {
-
 	// Create key
 	key, err := primitives.NewPrivateKey()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, key)
 
 	// Create the request / message
@@ -139,17 +136,17 @@ func TestSenderRequest_Verify(t *testing.T) {
 	// Sign
 	var sigBytes []byte
 	sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
-	assert.NoError(t, err)
-	assert.NotEqual(t, 0, len(sigBytes))
+	require.NoError(t, err)
+	assert.NotEmpty(t, sigBytes)
 
 	// Get address from private key
 	address, err := script.NewAddressFromPublicKey(key.PubKey(), true)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, address)
 
 	t.Run("valid verification", func(t *testing.T) {
 		err = senderRequest.Verify(address.AddressString, EncodeSignature(sigBytes))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("invalid - empty address", func(t *testing.T) {
@@ -177,7 +174,6 @@ func TestSenderRequest_Verify(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleSenderRequest_Verify() {
-
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",
@@ -201,7 +197,6 @@ func ExampleSenderRequest_Verify() {
 
 // BenchmarkSenderRequest_Verify benchmarks the method Verify()
 func BenchmarkSenderRequest_Verify(b *testing.B) {
-
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",

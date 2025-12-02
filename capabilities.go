@@ -2,9 +2,24 @@ package paymail
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
+)
+
+var (
+	// ErrCapabilitiesMissingTarget is returned when target is missing
+	ErrCapabilitiesMissingTarget = errors.New("missing target")
+	// ErrCapabilitiesMissingPort is returned when port is missing
+	ErrCapabilitiesMissingPort = errors.New("missing port")
+	// ErrCapabilitiesMissingVersion is returned when BSV Alias version is missing
+	ErrCapabilitiesMissingVersion = errors.New("missing bsv alias version")
+	// ErrCapabilitiesBadResponse is returned when receiving bad response from paymail provider
+	ErrCapabilitiesBadResponse = errors.New("bad response from paymail provider")
+	// ErrTestRequestFailed is returned when test HTTP request fails
+	ErrTestRequestFailed = errors.New("error in request")
 )
 
 /*
@@ -56,18 +71,6 @@ func (c *CapabilitiesPayload) Has(brfcID, alternateID string) bool {
 	return false
 }
 
-// getValue will return the value (if found) from the capability (url or bool)
-//
-// Alternate is used for IE: pki (it breaks convention of using the BRFC ID)
-func (c *CapabilitiesPayload) getValue(brfcID, alternateID string) (bool, interface{}) {
-	for key, val := range c.Capabilities {
-		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
-			return true, val
-		}
-	}
-	return false, nil
-}
-
 // GetString will perform getValue() but cast to a string if found
 //
 // Returns an empty string if not found
@@ -92,24 +95,23 @@ func (c *CapabilitiesPayload) GetBool(brfcID, alternateID string) bool {
 //
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
 func (c *Client) GetCapabilities(target string, port int) (response *CapabilitiesResponse, err error) {
-
 	// Basic requirements for the request
 	if len(target) == 0 {
-		err = fmt.Errorf("missing target")
-		return
+		err = ErrCapabilitiesMissingTarget
+		return response, err
 	} else if port == 0 {
-		err = fmt.Errorf("missing port")
-		return
+		err = ErrCapabilitiesMissingPort
+		return response, err
 	}
 
 	// Set the base url and path
 	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias[network]
-	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s%s", target, port, DefaultServiceName, c.options.network.URLSuffix())
+	reqURL := fmt.Sprintf("https://%s/.well-known/%s%s", net.JoinHostPort(target, fmt.Sprintf("%d", port)), DefaultServiceName, c.options.network.URLSuffix())
 
 	// Fire the GET request
 	var resp StandardResponse
 	if resp, err = c.getRequest(reqURL); err != nil {
-		return
+		return response, err
 	}
 
 	// Start the response
@@ -119,10 +121,10 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 		serverError := &ServerError{}
 		if err = json.Unmarshal(resp.Body, serverError); err != nil {
-			return
+			return response, err
 		}
-		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
-		return
+		err = fmt.Errorf("code %d, message: %s: %w", response.StatusCode, serverError.Message, ErrCapabilitiesBadResponse)
+		return response, err
 	}
 
 	// Decode the body of the response
@@ -132,32 +134,30 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 		if strings.Contains(err.Error(), "invalid character") {
 
 			// Replace any invalid quotes
-			bodyString := strings.Replace(strings.Replace(string(resp.Body), `“`, `"`, -1), `”`, `"`, -1)
+			bodyString := strings.ReplaceAll(strings.ReplaceAll(string(resp.Body), `"`, `"`), `"`, `"`)
 
 			// Parse again after fixing quotes
 			if err = json.Unmarshal([]byte(bodyString), &response); err != nil {
-				return
+				return response, err
 			}
 		}
 
 		// Still have an error?
 		if err != nil {
-			return
+			return response, err
 		}
 	}
 
 	// Invalid version detected
 	if len(response.BsvAlias) == 0 {
-		err = fmt.Errorf("missing %s version", DefaultServiceName)
-		return
+		err = ErrCapabilitiesMissingVersion
+		return response, err
 	}
 
 	// Parse PIKE capability
-	if err = parsePikeCapability(response); err != nil {
-		return
-	}
+	parsePikeCapability(response)
 
-	return
+	return response, err
 }
 
 // ExtractPikeOutputsURL extracts the outputs URL from the PIKE capability
@@ -176,8 +176,20 @@ func (c *CapabilitiesPayload) ExtractPikeInviteURL() string {
 	return ""
 }
 
+// getValue will return the value (if found) from the capability (url or bool)
+//
+// Alternate is used for IE: pki (it breaks convention of using the BRFC ID)
+func (c *CapabilitiesPayload) getValue(brfcID, alternateID string) (bool, interface{}) {
+	for key, val := range c.Capabilities {
+		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
+			return true, val
+		}
+	}
+	return false, nil
+}
+
 // parsePikeCapability parses the PIKE capability from the capabilities response
-func parsePikeCapability(response *CapabilitiesResponse) error {
+func parsePikeCapability(response *CapabilitiesResponse) {
 	if pike, ok := response.Capabilities[BRFCPike].(map[string]interface{}); ok {
 		response.Pike = &PikeCapability{}
 
@@ -190,5 +202,4 @@ func parsePikeCapability(response *CapabilitiesResponse) error {
 			response.Pike.Outputs = &outputsStr
 		}
 	}
-	return nil
 }

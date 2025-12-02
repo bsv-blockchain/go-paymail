@@ -1,11 +1,10 @@
 package spv
 
 import (
-	"github.com/bsv-blockchain/go-paymail/errors"
+	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
-
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 func ensureAncestorsArePresentInBump(tx *sdk.Transaction, dBeef *beef.DecodedBEEF) error {
@@ -27,7 +26,6 @@ func findMinedAncestors(tx *sdk.Transaction, ancestors []*beef.TxData) (map[stri
 	am := make(map[string]*beef.TxData)
 
 	for _, input := range tx.Inputs {
-
 		if err := findMinedAncestorsForInput(input, ancestors, am); err != nil {
 			return nil, err
 		}
@@ -58,6 +56,7 @@ func findMinedAncestorsForInput(input *sdk.TransactionInput, ancestors []*beef.T
 }
 
 func existsInBumps(tx *beef.TxData, bumps beef.BUMPs) bool {
+	//nolint:gosec // G115: safe conversion, BumpIndex is from parsed BEEF format
 	bumpIdx := int(*tx.BumpIndex)
 	txID := tx.GetTxID()
 

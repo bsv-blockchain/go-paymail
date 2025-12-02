@@ -4,19 +4,19 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
+	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
+	script "github.com/bitcoin-sv/go-sdk/script"
+	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 	"github.com/rs/zerolog"
 
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/beef"
-
-	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
-	script "github.com/bitcoin-sv/go-sdk/script"
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
 
 type p2pReceiveTxReqPayload struct {
 	*paymail.P2PTransaction
+
 	incomingPaymailAlias, incomingPaymailDomain string
 }
 
@@ -30,7 +30,6 @@ func processP2pReceiveTxRequest(c *Configuration, req *http.Request, incomingPay
 
 	md := CreateMetadata(req, payload.incomingPaymailAlias, payload.incomingPaymailDomain, "")
 	err = verifyIncomingPaymail(req.Context(), c, md, payload.incomingPaymailAlias, payload.incomingPaymailDomain)
-
 	if err != nil {
 		return returnError(err)
 	}

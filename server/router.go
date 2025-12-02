@@ -2,8 +2,9 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Handlers are used to isolate loading the routes (used for testing)
@@ -53,12 +54,12 @@ func (c *Configuration) RegisterRoutes(engine *gin.Engine) {
 	}
 }
 
-func (c *Configuration) registerRoute(engine *gin.Engine, cap CallableCapability) {
-	routerPath := c.templateToRouterPath(cap.Path)
+func (c *Configuration) registerRoute(engine *gin.Engine, capability CallableCapability) {
+	routerPath := c.templateToRouterPath(capability.Path)
 	engine.Handle(
-		cap.Method,
+		capability.Method,
 		routerPath,
-		cap.Handler,
+		capability.Handler,
 	)
 }
 

@@ -31,7 +31,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("successful testnet response", func(t *testing.T) {
@@ -44,7 +44,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("successful stn response", func(t *testing.T) {
@@ -57,7 +57,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("status not modified", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusNotModified, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("bad request", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusBadRequest, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("missing target", func(t *testing.T) {
@@ -128,7 +128,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		response, err := client.GetCapabilities(testDomain, DefaultPort)
@@ -151,7 +151,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusBadRequest, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("invalid quotes - good response", func(t *testing.T) {
@@ -161,8 +161,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusOK,
-				`{“`+DefaultServiceName+`“: “`+DefaultBsvAliasVersion+`“,“capabilities“: {“6745385c3fc0“: false,
-“pki“: “`+testServerURL+`id/{alias}@{domain.tld}“,“paymentDestination“: “`+testServerURL+`address/{alias}@{domain.tld}“}}`,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": {"6745385c3fc0": false,
+"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 			),
 		)
 
@@ -171,7 +171,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("invalid alias", func(t *testing.T) {
@@ -209,7 +209,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, response)
 		require.Equal(t, http.StatusNotModified, response.StatusCode)
-		require.Equal(t, 0, len(response.Capabilities))
+		require.Empty(t, response.Capabilities)
 	})
 
 	t.Run("successful response with PIKE capability", func(t *testing.T) {
@@ -222,7 +222,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 
 		// Check PIKE capability
 		require.NotNil(t, response.Pike)
@@ -239,7 +239,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		require.NotNil(t, response)
 		require.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
 		require.Equal(t, http.StatusOK, response.StatusCode)
-		require.Equal(t, true, response.Has(BRFCPki, ""))
+		require.True(t, response.Has(BRFCPki, ""))
 
 		// Check PIKE invite capability
 		require.NotNil(t, response.Pike)
@@ -259,7 +259,7 @@ func mockCapabilitiesNetwork(statusCode int, n Network) {
 	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.URLSuffix(),
 		httpmock.NewStringResponder(
 			statusCode,
-			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": 
+			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities":
 {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}",
 "paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),
@@ -320,7 +320,7 @@ func BenchmarkClient_GetCapabilities(b *testing.B) {
 func TestCapabilities_Has(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
@@ -421,7 +421,7 @@ func BenchmarkCapabilities_Has(b *testing.B) {
 func TestCapabilities_GetBool(t *testing.T) {
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
@@ -520,83 +520,88 @@ func BenchmarkCapabilities_GetBool(b *testing.B) {
 
 // TestCapabilities_GetString will test the method GetString()
 func TestCapabilities_GetString(t *testing.T) {
-
 	t.Parallel()
 
-	var tests = []struct {
+	tests := []struct {
 		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
 		expectedValue string
 	}{
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"pki",
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"0c4339ef99c2",
 			"pki",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"0c4339ef99c2",
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"pki",
 			"",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"wrong",
 			"wrong",
 			"",
 		},
-		{&CapabilitiesPayload{
-			BsvAlias: DefaultServiceName,
-			Capabilities: map[string]interface{}{
-				"6745385c3fc0": false,
-				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		{
+			&CapabilitiesPayload{
+				BsvAlias: DefaultServiceName,
+				Capabilities: map[string]interface{}{
+					"6745385c3fc0": false,
+					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				},
 			},
-		},
 			"wrong",
 			"pki",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",

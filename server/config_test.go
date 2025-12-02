@@ -1,16 +1,23 @@
 package server
 
 import (
+	"io"
 	"testing"
 	"time"
 
-	"github.com/bsv-blockchain/go-paymail/errors"
-
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-paymail"
+	"github.com/bsv-blockchain/go-paymail/errors"
 )
+
+// testLogger creates a race-free logger for testing (without Caller() hook)
+func testLogger() *zerolog.Logger {
+	logger := zerolog.New(io.Discard).With().Timestamp().Logger()
+	return &logger
+}
 
 // testConfig loads a basic test configuration
 func testConfig(t *testing.T, domain string) *Configuration {
@@ -22,6 +29,7 @@ func testConfig(t *testing.T, domain string) *Configuration {
 	c, err := NewConfig(
 		&sl,
 		WithDomain(domain),
+		WithLogger(testLogger()),
 	)
 	require.NoError(t, err)
 	require.NotNil(t, c)
@@ -135,11 +143,11 @@ func TestConfiguration_Validate(t *testing.T) {
 		c.SetGenericCapabilities()
 		assert.False(t, c.PaymailDomainsValidationDisabled)
 		err := c.Validate()
-		assert.ErrorIs(t, err, errors.ErrDomainMissing)
+		require.ErrorIs(t, err, errors.ErrDomainMissing)
 
 		c.PaymailDomainsValidationDisabled = true
 		err = c.Validate()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("configuration with SenderValidationEnabled", func(t *testing.T) {
@@ -155,17 +163,17 @@ func TestConfiguration_Validate(t *testing.T) {
 		}
 		c.SetGenericCapabilities()
 		err := c.Validate()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		caps, err := c.EnrichCapabilities("test.com")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, caps.Capabilities[paymail.BRFCSenderValidation].(bool))
 
 		c.SenderValidationEnabled = true
 		c.SetGenericCapabilities()
 		err = c.Validate()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		caps, err = c.EnrichCapabilities("test.com")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, caps.Capabilities[paymail.BRFCSenderValidation].(bool))
 	})
 }
@@ -179,7 +187,7 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		require.NotNil(t, c)
 
 		success := c.IsAllowedDomain("")
-		assert.Equal(t, false, success)
+		assert.False(t, success)
 	})
 
 	t.Run("domain found", func(t *testing.T) {
@@ -187,7 +195,7 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		require.NotNil(t, c)
 
 		success := c.IsAllowedDomain("test.com")
-		assert.Equal(t, true, success)
+		assert.True(t, success)
 	})
 
 	t.Run("sanitized domain found", func(t *testing.T) {
@@ -195,7 +203,7 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		require.NotNil(t, c)
 
 		success := c.IsAllowedDomain("WWW.test.COM")
-		assert.Equal(t, true, success)
+		assert.True(t, success)
 	})
 
 	t.Run("both domains are sanitized", func(t *testing.T) {
@@ -203,7 +211,7 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		require.NotNil(t, c)
 
 		success := c.IsAllowedDomain("WWW.test.COM")
-		assert.Equal(t, true, success)
+		assert.True(t, success)
 	})
 
 	t.Run("domain validation on", func(t *testing.T) {
@@ -211,8 +219,8 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		c.PaymailDomainsValidationDisabled = false
 		require.NotNil(t, c)
 
-		assert.Equal(t, true, c.IsAllowedDomain("test.com"))
-		assert.Equal(t, false, c.IsAllowedDomain("test2.com"))
+		assert.True(t, c.IsAllowedDomain("test.com"))
+		assert.False(t, c.IsAllowedDomain("test2.com"))
 	})
 
 	t.Run("domain validation off", func(t *testing.T) {
@@ -220,8 +228,8 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 		c.PaymailDomainsValidationDisabled = true
 		require.NotNil(t, c)
 
-		assert.Equal(t, true, c.IsAllowedDomain("test.com"))
-		assert.Equal(t, true, c.IsAllowedDomain("test2.com"))
+		assert.True(t, c.IsAllowedDomain("test.com"))
+		assert.True(t, c.IsAllowedDomain("test2.com"))
 	})
 }
 
@@ -235,7 +243,7 @@ func TestConfiguration_AddDomain(t *testing.T) {
 		require.NotNil(t, c)
 
 		err := c.AddDomain("")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.ErrorIs(t, err, errors.ErrDomainMissing)
 	})
 
@@ -248,7 +256,7 @@ func TestConfiguration_AddDomain(t *testing.T) {
 		err := c.AddDomain(addDomain)
 		require.NoError(t, err)
 
-		assert.Equal(t, 2, len(c.PaymailDomains))
+		assert.Len(t, c.PaymailDomains, 2)
 		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 		assert.Equal(t, "tester.com", c.PaymailDomains[1].Name)
 	})
@@ -262,7 +270,7 @@ func TestConfiguration_AddDomain(t *testing.T) {
 		err := c.AddDomain(addDomain)
 		require.NoError(t, err)
 
-		assert.Equal(t, 1, len(c.PaymailDomains))
+		assert.Len(t, c.PaymailDomains, 1)
 		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 	})
 }
@@ -277,8 +285,8 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 		require.NotNil(t, c)
 
 		caps, err := c.EnrichCapabilities(testDomain)
-		assert.NoError(t, err)
-		assert.Equal(t, 5, len(caps.Capabilities))
+		require.NoError(t, err)
+		assert.Len(t, caps.Capabilities, 5)
 		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/address/{alias}@{domain.tld}", caps.Capabilities[paymail.BRFCPaymentDestination])
 		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/id/{alias}@{domain.tld}", caps.Capabilities[paymail.BRFCPki])
 		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/public-profile/{alias}@{domain.tld}", caps.Capabilities[paymail.BRFCPublicProfile])
@@ -292,12 +300,12 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 		require.NotNil(t, c)
 
 		caps, err := c.EnrichCapabilities(testDomain)
-		assert.NoError(t, err)
-		assert.Equal(t, 5, len(caps.Capabilities))
+		require.NoError(t, err)
+		assert.Len(t, caps.Capabilities, 5)
 
 		caps, err = c.EnrichCapabilities(testDomain)
-		assert.NoError(t, err)
-		assert.Equal(t, 5, len(caps.Capabilities))
+		require.NoError(t, err)
+		assert.Len(t, caps.Capabilities, 5)
 	})
 
 	t.Run("empty domain and prefix", func(t *testing.T) {
@@ -318,14 +326,14 @@ func TestNewConfig(t *testing.T) {
 	t.Run("no values and no provider", func(t *testing.T) {
 		c, err := NewConfig(nil)
 		require.Error(t, err)
-		assert.ErrorIs(t, err, errors.ErrServiceProviderNil)
+		require.ErrorIs(t, err, errors.ErrServiceProviderNil)
 		assert.Nil(t, c)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
 		c, err := NewConfig(&PaymailServiceLocator{})
 		require.Error(t, err)
-		assert.ErrorIs(t, err, errors.ErrDomainMissing)
+		require.ErrorIs(t, err, errors.ErrDomainMissing)
 		assert.Nil(t, c)
 	})
 
@@ -335,10 +343,11 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig(
 			sl,
 			WithDomain("test.com"),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 4, len(c.callableCapabilities))
+		assert.Len(t, c.callableCapabilities, 4)
 		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 	})
 
@@ -349,6 +358,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithPort(12345),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -362,6 +372,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithTimeout(10*time.Second),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -375,6 +386,7 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithServiceName("custom"),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
@@ -388,10 +400,11 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithSenderValidation(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, true, c.SenderValidationEnabled)
+		assert.True(t, c.SenderValidationEnabled)
 	})
 
 	t.Run("with p2p capabilities", func(t *testing.T) {
@@ -401,10 +414,11 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 6, len(c.callableCapabilities))
+		assert.Len(t, c.callableCapabilities, 6)
 	})
 
 	t.Run("with custom capabilities", func(t *testing.T) {
@@ -422,11 +436,12 @@ func TestNewConfig(t *testing.T) {
 					Handler: nil,
 				},
 			}),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 5, len(c.callableCapabilities))
-		assert.Equal(t, 2, len(c.staticCapabilities))
+		assert.Len(t, c.callableCapabilities, 5)
+		assert.Len(t, c.staticCapabilities, 2)
 		assert.True(t, c.staticCapabilities["test"].(bool))
 		assert.Equal(t, "/test", c.callableCapabilities["callable"].Path)
 	})
@@ -440,10 +455,11 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithBeefCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 7, len(c.callableCapabilities))
+		assert.Len(t, c.callableCapabilities, 7)
 	})
 
 	t.Run("with basic routes", func(t *testing.T) {
@@ -454,14 +470,15 @@ func TestNewConfig(t *testing.T) {
 			sl,
 			WithDomain("test.com"),
 			WithBasicRoutes(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
 		require.NotNil(t, c.BasicRoutes)
-		assert.Equal(t, true, c.BasicRoutes.Add404Route)
-		assert.Equal(t, true, c.BasicRoutes.AddIndexRoute)
-		assert.Equal(t, true, c.BasicRoutes.AddHealthRoute)
-		assert.Equal(t, true, c.BasicRoutes.AddNotAllowed)
+		assert.True(t, c.BasicRoutes.Add404Route)
+		assert.True(t, c.BasicRoutes.AddIndexRoute)
+		assert.True(t, c.BasicRoutes.AddHealthRoute)
+		assert.True(t, c.BasicRoutes.AddNotAllowed)
 	})
 
 	t.Run("domain validation disabled", func(t *testing.T) {
@@ -473,11 +490,12 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithPort(12345),
 			WithDomainValidationDisabled(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
 		assert.Equal(t, 12345, c.Port)
-		assert.Equal(t, true, c.PaymailDomainsValidationDisabled)
+		assert.True(t, c.PaymailDomainsValidationDisabled)
 	})
 
 	t.Run("with pike contact capabilities", func(t *testing.T) {
@@ -490,11 +508,12 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 6, len(c.callableCapabilities))
-		assert.Equal(t, 1, len(c.nestedCapabilities))
+		assert.Len(t, c.callableCapabilities, 6)
+		assert.Len(t, c.nestedCapabilities, 1)
 	})
 
 	t.Run("with pike payment capabilities", func(t *testing.T) {
@@ -507,11 +526,12 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 6, len(c.callableCapabilities))
-		assert.Equal(t, 1, len(c.nestedCapabilities))
+		assert.Len(t, c.callableCapabilities, 6)
+		assert.Len(t, c.nestedCapabilities, 1)
 	})
 
 	t.Run("with both pike capabilities", func(t *testing.T) {
@@ -526,11 +546,12 @@ func TestNewConfig(t *testing.T) {
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 6, len(c.callableCapabilities))
-		assert.Equal(t, 1, len(c.nestedCapabilities))
+		assert.Len(t, c.callableCapabilities, 6)
+		assert.Len(t, c.nestedCapabilities, 1)
 	})
 
 	t.Run("with pike contact capabilities - pike contact service is not registered -> should panic", func(t *testing.T) {
@@ -548,10 +569,11 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikeContactCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 7, len(c.callableCapabilities))
+		assert.Len(t, c.callableCapabilities, 7)
 	})
 
 	t.Run("with pike payment capabilities - pike payment service is not registered -> should panic", func(t *testing.T) {
@@ -569,9 +591,10 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithP2PCapabilities(),
 			WithPikePaymentCapabilities(),
+			WithLogger(testLogger()),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)
-		assert.Equal(t, 6, len(c.callableCapabilities))
+		assert.Len(t, c.callableCapabilities, 6)
 	})
 }

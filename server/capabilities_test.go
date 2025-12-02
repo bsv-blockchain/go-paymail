@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateServiceURL(t *testing.T) {
@@ -11,7 +12,7 @@ func TestGenerateServiceURL(t *testing.T) {
 
 	t.Run("valid values", func(t *testing.T) {
 		u, err := generateServiceURL("https://", "test.com", "v1", "bsvalias")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "https://test.com/v1/bsvalias", u)
 	})
 
@@ -32,19 +33,19 @@ func TestGenerateServiceURL(t *testing.T) {
 
 	t.Run("no api version", func(t *testing.T) {
 		u, err := generateServiceURL("https://", "test", "", "bsvalias")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "https://test/bsvalias", u)
 	})
 
 	t.Run("no service name", func(t *testing.T) {
 		u, err := generateServiceURL("https://", "test", "v1", "")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "https://test/v1", u)
 	})
 
 	t.Run("service with explicit port", func(t *testing.T) {
 		u, err := generateServiceURL("https://", "test:1234", "v1", "bsvalias")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "https://test:1234/v1/bsvalias", u)
 	})
 }

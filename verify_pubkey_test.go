@@ -29,7 +29,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
 		assert.Equal(t, testPubKey, verification.PubKey)
-		assert.Equal(t, true, verification.Match)
+		assert.True(t, verification.Match)
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		assert.Equal(t, http.StatusNotModified, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
 		assert.Equal(t, testPubKey, verification.PubKey)
-		assert.Equal(t, true, verification.Match)
+		assert.True(t, verification.Match)
 	})
 
 	t.Run("missing url", func(t *testing.T) {
@@ -127,7 +127,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
-			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
 		verification, err := client.VerifyPubKey(
@@ -176,9 +176,9 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
-		assert.Equal(t, "", verification.BsvAlias)
-		assert.Equal(t, "", verification.PubKey)
-		assert.Equal(t, "", verification.Handle)
+		assert.Empty(t, verification.BsvAlias)
+		assert.Empty(t, verification.PubKey)
+		assert.Empty(t, verification.Handle)
 	})
 
 	t.Run("invalid handle", func(t *testing.T) {
@@ -199,7 +199,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
-		assert.Equal(t, "", verification.Handle)
+		assert.Empty(t, verification.Handle)
 	})
 
 	t.Run("invalid bsv alias", func(t *testing.T) {
@@ -220,7 +220,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
-		assert.Equal(t, "", verification.BsvAlias)
+		assert.Empty(t, verification.BsvAlias)
 	})
 
 	t.Run("empty pubkey", func(t *testing.T) {
@@ -241,7 +241,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
-		assert.Equal(t, "", verification.PubKey)
+		assert.Empty(t, verification.PubKey)
 	})
 
 	t.Run("invalid pubkey", func(t *testing.T) {
