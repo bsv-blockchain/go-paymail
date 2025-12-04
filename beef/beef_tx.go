@@ -173,10 +173,8 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 
 func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
 	bumpPath := make([]BUMPLeaf, 0)
-	//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
 	for i := 0; i < int(nLeaves); i++ {
 		if len(hexBytes) == 0 {
-			//nolint:gosec // G115: safe conversion, nLeaves is from parsed BEEF format
 			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesOffset)
 		}
 
@@ -232,10 +230,8 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 
 	bytes = bytes[offset:]
 
-	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	transactions := make([]*TxData, 0, int(nTransactions))
 
-	//nolint:gosec // G115: safe conversion, nTransactions is from parsed BEEF format
 	for i := 0; i < int(nTransactions); i++ {
 		tx, offset, err := sdk.NewTransactionFromStream(bytes)
 		if err != nil {

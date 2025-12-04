@@ -83,8 +83,6 @@ func TestClient_GetOutputsTemplate(t *testing.T) {
 }
 
 // mockPIKEOutputs is used for mocking the PIKE outputs response
-//
-//nolint:gosec // G115: safe conversion in test context
 func mockPIKEOutputs(statusCode int, amount uint64) {
 	httpmock.RegisterResponder(http.MethodPost, "https://"+testDomain+"/v1/bsvalias/pike/outputs/alias@domain.tld",
 		httpmock.NewStringResponder(
