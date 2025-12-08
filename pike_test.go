@@ -92,7 +92,7 @@ func mockPIKEOutputs(statusCode int, amount uint64) {
 				"outputs": [
 					{
 						"script": "76a9fd88ac",
-						"satoshis": `+strconv.Itoa(int(amount))+`
+						"satoshis": `+strconv.FormatUint(amount, 10)+`
 					}
 				]
             }`,

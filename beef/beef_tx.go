@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math"
 
 	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 	util "github.com/bitcoin-sv/go-sdk/util"
@@ -55,6 +56,8 @@ var (
 	ErrBeefInvalidFlag = errors.New("invalid flag")
 	// ErrBeefInvalidHasCMPFlag is returned when HasCMP flag is invalid
 	ErrBeefInvalidHasCMPFlag = errors.New("invalid HasCMP flag for transaction")
+	// ErrBeefIntegerOverflow is returned when an integer conversion would cause overflow
+	ErrBeefIntegerOverflow = errors.New("integer value exceeds maximum safe conversion range")
 )
 
 type TxData struct {
@@ -172,24 +175,30 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 }
 
 func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
+	// Check for integer overflow before converting uint64 to int
+	if nLeaves > math.MaxInt {
+		return nil, nil, fmt.Errorf("number of leaves %d: %w", nLeaves, ErrBeefIntegerOverflow)
+	}
+	nLeavesInt := int(nLeaves) // #nosec G115 - overflow checked above
+
 	bumpPath := make([]BUMPLeaf, 0)
-	for i := 0; i < int(nLeaves); i++ {
+	for i := 0; i < nLeavesInt; i++ {
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesOffset)
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, nLeavesInt, ErrBeefInsufficientBytesOffset)
 		}
 
 		offset, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
 
 		if len(hexBytes) == 0 {
-			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, int(nLeaves), ErrBeefInsufficientBytesFlag)
+			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, nLeavesInt, ErrBeefInsufficientBytesFlag)
 		}
 
 		flag := hexBytes[0]
 		hexBytes = hexBytes[1:]
 
 		if flag != dataFlag && flag != duplicateFlag && flag != txIDFlag {
-			return nil, nil, fmt.Errorf("flag %d for leaf %d of %d: %w", flag, i, int(nLeaves), ErrBeefInvalidFlag)
+			return nil, nil, fmt.Errorf("flag %d for leaf %d of %d: %w", flag, i, nLeavesInt, ErrBeefInvalidFlag)
 		}
 
 		if flag == duplicateFlag {
@@ -228,11 +237,17 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 		return nil, ErrBeefInsufficientTransactions
 	}
 
+	// Check for integer overflow before converting uint64 to int
+	if nTransactions > math.MaxInt {
+		return nil, fmt.Errorf("number of transactions %d: %w", nTransactions, ErrBeefIntegerOverflow)
+	}
+	nTransactionsInt := int(nTransactions) // #nosec G115 - overflow checked above
+
 	bytes = bytes[offset:]
 
-	transactions := make([]*TxData, 0, int(nTransactions))
+	transactions := make([]*TxData, 0, nTransactionsInt)
 
-	for i := 0; i < int(nTransactions); i++ {
+	for i := 0; i < nTransactionsInt; i++ {
 		tx, offset, err := sdk.NewTransactionFromStream(bytes)
 		if err != nil {
 			return nil, err
