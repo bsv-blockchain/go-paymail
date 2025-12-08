@@ -1,6 +1,8 @@
 package spv
 
 import (
+	"math"
+
 	sdk "github.com/bitcoin-sv/go-sdk/transaction"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
@@ -56,7 +58,11 @@ func findMinedAncestorsForInput(input *sdk.TransactionInput, ancestors []*beef.T
 }
 
 func existsInBumps(tx *beef.TxData, bumps beef.BUMPs) bool {
-	bumpIdx := int(*tx.BumpIndex)
+	// Check for integer overflow before converting uint64 to int
+	if *tx.BumpIndex > math.MaxInt {
+		return false
+	}
+	bumpIdx := int(*tx.BumpIndex) // #nosec G115 - overflow checked above
 	txID := tx.GetTxID()
 
 	if len(bumps) > bumpIdx {
