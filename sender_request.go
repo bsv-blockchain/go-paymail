@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
-	primitives "github.com/bitcoin-sv/go-sdk/primitives/ec"
+	bsm "github.com/bsv-blockchain/go-sdk/compat/bsm"
+	primitives "github.com/bsv-blockchain/go-sdk/primitives/ec"
 )
 
 var (
