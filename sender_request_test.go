@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	primitives "github.com/bitcoin-sv/go-sdk/primitives/ec"
-	"github.com/bitcoin-sv/go-sdk/script"
+	primitives "github.com/bsv-blockchain/go-sdk/primitives/ec"
+	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

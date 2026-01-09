@@ -3,8 +3,9 @@ package beef
 import (
 	"testing"
 
-	script "github.com/bitcoin-sv/go-sdk/script"
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	script "github.com/bsv-blockchain/go-sdk/script"
+	sdk "github.com/bsv-blockchain/go-sdk/transaction"
+	util "github.com/bsv-blockchain/go-sdk/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -14,7 +15,7 @@ func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
 		name                       string
 		hexStream                  string
 		expectedDecodedBEEF        *DecodedBEEF
-		pathIndexForTheOldestInput *sdk.VarInt
+		pathIndexForTheOldestInput *util.VarInt
 	}{
 		{
 			name:      "valid BEEF with 1 BUMP and 1 input transaction",
@@ -68,7 +69,7 @@ func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
 								},
 							},
 						},
-						BumpIndex: func(v sdk.VarInt) *sdk.VarInt { return &v }(0x0),
+						BumpIndex: func(v util.VarInt) *util.VarInt { return &v }(0x0),
 					},
 
 					{
@@ -93,7 +94,7 @@ func TestDecodeBEEF_DecodeBEEF_HappyPaths(t *testing.T) {
 					},
 				},
 			},
-			pathIndexForTheOldestInput: func(v sdk.VarInt) *sdk.VarInt { return &v }(0x0),
+			pathIndexForTheOldestInput: func(v util.VarInt) *util.VarInt { return &v }(0x0),
 		},
 	}
 	for _, tc := range testCases {

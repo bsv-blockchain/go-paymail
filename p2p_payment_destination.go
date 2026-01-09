@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bitcoin-sv/go-sdk/script"
+	"github.com/bsv-blockchain/go-sdk/script"
 )
 
 var (

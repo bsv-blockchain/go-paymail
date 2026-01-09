@@ -3,8 +3,8 @@ package beef
 import (
 	"encoding/hex"
 
-	crypto "github.com/bitcoin-sv/go-sdk/primitives/hash"
-	"github.com/bitcoin-sv/go-sdk/util"
+	crypto "github.com/bsv-blockchain/go-sdk/primitives/hash"
+	"github.com/bsv-blockchain/go-sdk/util"
 )
 
 // INFO: This function is moved to go-paymail from go-bc

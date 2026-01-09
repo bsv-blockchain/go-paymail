@@ -3,7 +3,8 @@ package spv
 import (
 	"testing"
 
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	sdk "github.com/bsv-blockchain/go-sdk/transaction"
+	util "github.com/bsv-blockchain/go-sdk/util"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
@@ -29,7 +30,7 @@ func TestExistsInBumps(t *testing.T) {
 	}
 
 	t.Run("returns true when tx exists in bump at correct index", func(t *testing.T) {
-		bumpIndex := sdk.VarInt(0)
+		bumpIndex := util.VarInt(0)
 		txData := &beef.TxData{
 			Transaction: &sdk.Transaction{Version: 1},
 			BumpIndex:   &bumpIndex,
@@ -42,7 +43,7 @@ func TestExistsInBumps(t *testing.T) {
 	})
 
 	t.Run("returns false when bump index out of range", func(t *testing.T) {
-		bumpIndex := sdk.VarInt(10) // Out of range
+		bumpIndex := util.VarInt(10) // Out of range
 		txData := &beef.TxData{
 			Transaction: &sdk.Transaction{Version: 1},
 			BumpIndex:   &bumpIndex,
@@ -53,7 +54,7 @@ func TestExistsInBumps(t *testing.T) {
 	})
 
 	t.Run("returns false with empty bumps", func(t *testing.T) {
-		bumpIndex := sdk.VarInt(0)
+		bumpIndex := util.VarInt(0)
 		txData := &beef.TxData{
 			Transaction: &sdk.Transaction{Version: 1},
 			BumpIndex:   &bumpIndex,
@@ -64,7 +65,7 @@ func TestExistsInBumps(t *testing.T) {
 	})
 
 	t.Run("returns false with nil bumps", func(t *testing.T) {
-		bumpIndex := sdk.VarInt(0)
+		bumpIndex := util.VarInt(0)
 		txData := &beef.TxData{
 			Transaction: &sdk.Transaction{Version: 1},
 			BumpIndex:   &bumpIndex,

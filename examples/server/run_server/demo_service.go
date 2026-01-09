@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"strings"
 
-	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
-	ec "github.com/bitcoin-sv/go-sdk/primitives/ec"
-	"github.com/bitcoin-sv/go-sdk/script"
-	"github.com/bitcoin-sv/go-sdk/transaction/template/p2pkh"
+	bsm "github.com/bsv-blockchain/go-sdk/compat/bsm"
+	ec "github.com/bsv-blockchain/go-sdk/primitives/ec"
+	"github.com/bsv-blockchain/go-sdk/script"
+	"github.com/bsv-blockchain/go-sdk/transaction/template/p2pkh"
 
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/logging"

@@ -1,8 +1,8 @@
 package spv
 
 import (
-	interpreter "github.com/bitcoin-sv/go-sdk/script/interpreter"
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	interpreter "github.com/bsv-blockchain/go-sdk/script/interpreter"
+	sdk "github.com/bsv-blockchain/go-sdk/transaction"
 
 	"github.com/bsv-blockchain/go-paymail/beef"
 	"github.com/bsv-blockchain/go-paymail/errors"
