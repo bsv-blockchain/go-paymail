@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	bsm "github.com/bitcoin-sv/go-sdk/compat/bsm"
-	script "github.com/bitcoin-sv/go-sdk/script"
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
+	bsm "github.com/bsv-blockchain/go-sdk/compat/bsm"
+	script "github.com/bsv-blockchain/go-sdk/script"
+	sdk "github.com/bsv-blockchain/go-sdk/transaction"
 	"github.com/rs/zerolog"
 
 	"github.com/bsv-blockchain/go-paymail"
