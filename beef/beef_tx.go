@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"math"
 
-	sdk "github.com/bitcoin-sv/go-sdk/transaction"
-	util "github.com/bitcoin-sv/go-sdk/util"
+	sdk "github.com/bsv-blockchain/go-sdk/transaction"
+	util "github.com/bsv-blockchain/go-sdk/util"
 )
 
 const (
@@ -62,7 +62,7 @@ var (
 
 type TxData struct {
 	Transaction *sdk.Transaction `json:"transaction"`
-	BumpIndex   *sdk.VarInt      `json:"bumpIndex"`
+	BumpIndex   *util.VarInt     `json:"bumpIndex"`
 
 	txID string
 }
@@ -115,7 +115,7 @@ func decodeBUMPs(beefBytes []byte) ([]*BUMP, []byte, error) {
 		return nil, nil, ErrBeefNoBytesForBump
 	}
 
-	nBump, bytesUsed := sdk.NewVarIntFromBytes(beefBytes)
+	nBump, bytesUsed := util.NewVarIntFromBytes(beefBytes)
 
 	if nBump == 0 {
 		return nil, nil, ErrBeefNoLowestBump
@@ -128,7 +128,7 @@ func decodeBUMPs(beefBytes []byte) ([]*BUMP, []byte, error) {
 		if len(beefBytes) == 0 {
 			return nil, nil, ErrBeefInsufficientBytesBlockHeight
 		}
-		blockHeight, bytesUsed := sdk.NewVarIntFromBytes(beefBytes)
+		blockHeight, bytesUsed := util.NewVarIntFromBytes(beefBytes)
 		beefBytes = beefBytes[bytesUsed:]
 
 		treeHeight := beefBytes[0]
@@ -161,7 +161,7 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 		if len(hexBytes) == 0 {
 			return nil, nil, ErrBeefNoBytesForPaths
 		}
-		nLeaves, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
+		nLeaves, bytesUsed := util.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
 		bumpPath, remainingBytes, err := decodeBUMPLevel(nLeaves, hexBytes)
 		if err != nil {
@@ -174,7 +174,7 @@ func decodeBUMPPathsFromStream(treeHeight int, hexBytes []byte) ([][]BUMPLeaf, [
 	return bumpPaths, hexBytes, nil
 }
 
-func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
+func decodeBUMPLevel(nLeaves util.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, error) {
 	// Check for integer overflow before converting uint64 to int
 	if nLeaves > math.MaxInt {
 		return nil, nil, fmt.Errorf("number of leaves %d: %w", nLeaves, ErrBeefIntegerOverflow)
@@ -187,7 +187,7 @@ func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, e
 			return nil, nil, fmt.Errorf("leaf %d of %d: %w", i, nLeavesInt, ErrBeefInsufficientBytesOffset)
 		}
 
-		offset, bytesUsed := sdk.NewVarIntFromBytes(hexBytes)
+		offset, bytesUsed := util.NewVarIntFromBytes(hexBytes)
 		hexBytes = hexBytes[bytesUsed:]
 
 		if len(hexBytes) == 0 {
@@ -231,7 +231,7 @@ func decodeBUMPLevel(nLeaves sdk.VarInt, hexBytes []byte) ([]BUMPLeaf, []byte, e
 }
 
 func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
-	nTransactions, offset := sdk.NewVarIntFromBytes(bytes)
+	nTransactions, offset := util.NewVarIntFromBytes(bytes)
 
 	if nTransactions < 2 {
 		return nil, ErrBeefInsufficientTransactions
@@ -254,11 +254,11 @@ func decodeTransactionsWithPathIndexes(bytes []byte) ([]*TxData, error) {
 		}
 		bytes = bytes[offset:]
 
-		var pathIndex *sdk.VarInt
+		var pathIndex *util.VarInt
 
 		switch bytes[0] {
 		case HasBump:
-			value, offset := sdk.NewVarIntFromBytes(bytes[1:])
+			value, offset := util.NewVarIntFromBytes(bytes[1:])
 			pathIndex = &value
 			bytes = bytes[1+offset:]
 		case HasNoBump:
