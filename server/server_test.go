@@ -53,7 +53,7 @@ func TestWithServer(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create request: %v", err)
 		}
-		resp, err := http.DefaultClient.Do(req) //nolint:gosec // G704: URL is from controlled httptest.NewServer, not user input
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			t.Fatalf("Failed to make GET request: %v", err)
 		}
@@ -87,7 +87,7 @@ func TestWithServer(t *testing.T) {
 				t.Logf("Failed to create request: %v", err)
 				continue
 			}
-			resp, err := http.DefaultClient.Do(req) //nolint:gosec // G704: URL is from controlled httptest.NewServer capabilities, not user input
+			resp, err := http.DefaultClient.Do(req)
 			if err == nil {
 				_ = resp.Body.Close()
 			}
