@@ -56,9 +56,9 @@ func TestWithNameServer(t *testing.T) {
 	t.Parallel()
 
 	opts := &ClientOptions{}
-	WithNameServer("1.1.1.1")(opts)
+	WithNameServer("198.51.100.1")(opts)
 
-	assert.Equal(t, "1.1.1.1", opts.nameServer)
+	assert.Equal(t, "198.51.100.1", opts.nameServer)
 }
 
 func TestWithNameServerNetwork(t *testing.T) {
@@ -151,7 +151,7 @@ func TestClientOptions_ChainedOptions(t *testing.T) {
 	WithDNSPort("5353")(opts)
 	WithDNSTimeout(30 * time.Second)(opts)
 	WithHTTPTimeout(60 * time.Second)(opts)
-	WithNameServer("1.1.1.1")(opts)
+	WithNameServer("198.51.100.1")(opts)
 	WithRetryCount(5)(opts)
 	WithRequestTracing()(opts)
 	WithUserAgent("test-agent")(opts)
@@ -161,7 +161,7 @@ func TestClientOptions_ChainedOptions(t *testing.T) {
 	assert.Equal(t, "5353", opts.dnsPort)
 	assert.Equal(t, 30*time.Second, opts.dnsTimeout)
 	assert.Equal(t, 60*time.Second, opts.httpTimeout)
-	assert.Equal(t, "1.1.1.1", opts.nameServer)
+	assert.Equal(t, "198.51.100.1", opts.nameServer)
 	assert.Equal(t, 5, opts.retryCount)
 	assert.True(t, opts.requestTracing)
 	assert.Equal(t, "test-agent", opts.userAgent)
