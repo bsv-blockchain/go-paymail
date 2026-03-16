@@ -7,6 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// testNameServer is an RFC 5737 documentation IP used for test fixtures.
+const testNameServer = "198.51.100.1"
+
 // Tests for client functional options (client_options.go)
 // TestDefaultClientOptions is already covered in client_test.go
 
@@ -56,9 +59,9 @@ func TestWithNameServer(t *testing.T) {
 	t.Parallel()
 
 	opts := &ClientOptions{}
-	WithNameServer("1.1.1.1")(opts)
+	WithNameServer(testNameServer)(opts)
 
-	assert.Equal(t, "1.1.1.1", opts.nameServer)
+	assert.Equal(t, testNameServer, opts.nameServer)
 }
 
 func TestWithNameServerNetwork(t *testing.T) {
@@ -151,7 +154,7 @@ func TestClientOptions_ChainedOptions(t *testing.T) {
 	WithDNSPort("5353")(opts)
 	WithDNSTimeout(30 * time.Second)(opts)
 	WithHTTPTimeout(60 * time.Second)(opts)
-	WithNameServer("1.1.1.1")(opts)
+	WithNameServer(testNameServer)(opts)
 	WithRetryCount(5)(opts)
 	WithRequestTracing()(opts)
 	WithUserAgent("test-agent")(opts)
@@ -161,7 +164,7 @@ func TestClientOptions_ChainedOptions(t *testing.T) {
 	assert.Equal(t, "5353", opts.dnsPort)
 	assert.Equal(t, 30*time.Second, opts.dnsTimeout)
 	assert.Equal(t, 60*time.Second, opts.httpTimeout)
-	assert.Equal(t, "1.1.1.1", opts.nameServer)
+	assert.Equal(t, testNameServer, opts.nameServer)
 	assert.Equal(t, 5, opts.retryCount)
 	assert.True(t, opts.requestTracing)
 	assert.Equal(t, "test-agent", opts.userAgent)
