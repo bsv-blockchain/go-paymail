@@ -127,7 +127,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 			{
 				"valid domain and parameters",
 				&net.SRV{
-					Target:   "domain.com",
+					Target:   testExampleDomain,
 					Port:     DefaultPort,
 					Priority: DefaultPriority,
 					Weight:   DefaultWeight,
@@ -139,7 +139,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 			{
 				"use default ports",
 				&net.SRV{
-					Target:   "domain.com",
+					Target:   testExampleDomain,
 					Port:     DefaultPort,
 					Priority: DefaultPriority,
 					Weight:   DefaultWeight,
@@ -192,7 +192,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 			{
 				"invalid port",
 				&net.SRV{
-					Target:   "domain.com",
+					Target:   testExampleDomain,
 					Port:     123,
 					Priority: DefaultPriority,
 					Weight:   DefaultWeight,
@@ -204,7 +204,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 			{
 				"invalid priority",
 				&net.SRV{
-					Target:   "domain.com",
+					Target:   testExampleDomain,
 					Port:     DefaultPort,
 					Priority: 123,
 					Weight:   DefaultWeight,
@@ -216,7 +216,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 			{
 				"invalid weight",
 				&net.SRV{
-					Target:   "domain.com",
+					Target:   testExampleDomain,
 					Port:     DefaultPort,
 					Priority: DefaultPriority,
 					Weight:   123,

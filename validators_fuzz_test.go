@@ -7,7 +7,7 @@ import "testing"
 func FuzzIsValidEmail(f *testing.F) {
 	// Seed corpus with representative examples
 	seeds := []string{
-		"test@domain.com",
+		testPaymailInput,
 		"user@example.org",
 		"invalid-email",
 		"@nodomain.com",

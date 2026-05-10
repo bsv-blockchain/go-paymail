@@ -329,51 +329,51 @@ func TestCapabilities_Has(t *testing.T) {
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "alternate_id", true},
+		}, BRFCSenderValidation, testAlternateCapID, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "", true},
+		}, BRFCSenderValidation, "", true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "alternate_id", "6745385c3fc0", true},
+		}, testAlternateCapID, BRFCSenderValidation, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "6745385c3fc0", true},
+		}, BRFCSenderValidation, BRFCSenderValidation, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "wrong", "wrong", false},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "wrong", "6745385c3fc0", true},
+		}, "wrong", BRFCSenderValidation, true},
 	}
 
 	for _, test := range tests {
@@ -390,13 +390,13 @@ func ExampleCapabilitiesPayload_Has() {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": true,
-			"alternate_id": true,
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: true,
+			testAlternateCapID:   true,
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 
-	found := capabilities.Has("6745385c3fc0", "alternate_id")
+	found := capabilities.Has(BRFCSenderValidation, testAlternateCapID)
 	fmt.Printf("found brfc: %v", found)
 	// Output:found brfc: true
 }
@@ -406,14 +406,14 @@ func BenchmarkCapabilities_Has(b *testing.B) {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": true,
-			"alternate_id": true,
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: true,
+			testAlternateCapID:   true,
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 
 	for i := 0; i < b.N; i++ {
-		_ = capabilities.Has("6745385c3fc0", "alternate_id")
+		_ = capabilities.Has(BRFCSenderValidation, testAlternateCapID)
 	}
 }
 
@@ -430,51 +430,51 @@ func TestCapabilities_GetBool(t *testing.T) {
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "alternate_id", true},
+		}, BRFCSenderValidation, testAlternateCapID, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "", true},
+		}, BRFCSenderValidation, "", true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "alternate_id", "6745385c3fc0", true},
+		}, testAlternateCapID, BRFCSenderValidation, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "6745385c3fc0", "6745385c3fc0", true},
+		}, BRFCSenderValidation, BRFCSenderValidation, true},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "wrong", "wrong", false},
 		{&CapabilitiesPayload{
 			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
-				"6745385c3fc0": true,
-				"alternate_id": true,
-				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				BRFCSenderValidation: true,
+				testAlternateCapID:   true,
+				BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
-		}, "wrong", "6745385c3fc0", true},
+		}, "wrong", BRFCSenderValidation, true},
 	}
 
 	for _, test := range tests {
@@ -491,13 +491,13 @@ func ExampleCapabilitiesPayload_GetBool() {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": true,
-			"alternate_id": true,
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: true,
+			testAlternateCapID:   true,
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 
-	found := capabilities.GetBool("6745385c3fc0", "alternate_id")
+	found := capabilities.GetBool(BRFCSenderValidation, testAlternateCapID)
 	fmt.Printf("found value: %v", found)
 	// Output:found value: true
 }
@@ -507,14 +507,14 @@ func BenchmarkCapabilities_GetBool(b *testing.B) {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": true,
-			"alternate_id": true,
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: true,
+			testAlternateCapID:   true,
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 
 	for i := 0; i < b.N; i++ {
-		_ = capabilities.GetBool("6745385c3fc0", "alternate_id")
+		_ = capabilities.GetBool(BRFCSenderValidation, testAlternateCapID)
 	}
 }
 
@@ -532,51 +532,51 @@ func TestCapabilities_GetString(t *testing.T) {
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
-			"pki",
-			"0c4339ef99c2",
+			BRFCPki,
+			BRFCPkiAlternate,
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 		{
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
-			"0c4339ef99c2",
-			"pki",
+			BRFCPkiAlternate,
+			BRFCPki,
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 		{
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
-			"0c4339ef99c2",
-			"0c4339ef99c2",
+			BRFCPkiAlternate,
+			BRFCPkiAlternate,
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 		{
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
-			"pki",
+			BRFCPki,
 			"",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
@@ -584,9 +584,9 @@ func TestCapabilities_GetString(t *testing.T) {
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
 			"wrong",
@@ -597,13 +597,13 @@ func TestCapabilities_GetString(t *testing.T) {
 			&CapabilitiesPayload{
 				BsvAlias: DefaultServiceName,
 				Capabilities: map[string]interface{}{
-					"6745385c3fc0": false,
-					"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-					"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCSenderValidation: false,
+					BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+					BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 				},
 			},
 			"wrong",
-			"pki",
+			BRFCPki,
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
@@ -622,13 +622,13 @@ func ExampleCapabilitiesPayload_GetString() {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": false,
-			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: false,
+			BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 
-	found := capabilities.GetString("pki", "0c4339ef99c2")
+	found := capabilities.GetString(BRFCPki, BRFCPkiAlternate)
 	fmt.Printf("found value: %v", found)
 	// Output:found value: https://domain.com/bsvalias/id/{alias}@{domain.tld}
 }
@@ -638,13 +638,13 @@ func BenchmarkCapabilities_GetString(b *testing.B) {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": false,
-			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
-			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: false,
+			BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCPkiAlternate:     "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
 	}
 	for i := 0; i < b.N; i++ {
-		_ = capabilities.GetString("pki", "0c4339ef99c2")
+		_ = capabilities.GetString(BRFCPki, BRFCPkiAlternate)
 	}
 }
 
@@ -655,8 +655,8 @@ func ExampleCapabilitiesPayload_ExtractPikeOutputsURL() {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": false,
-			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: false,
+			BRFCPki:              "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			"935478af7bf2": map[string]interface{}{
 				"invite":  TestPikeInviteCapability,
 				"outputs": TestPikeOutputsCapability,
@@ -743,8 +743,8 @@ func ExampleCapabilitiesPayload_ExtractPikeInviteURL() {
 	capabilities := &CapabilitiesPayload{
 		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
-			"6745385c3fc0": false,
-			"pki":          "https://" + testDomain + "/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			BRFCSenderValidation: false,
+			BRFCPki:              "https://" + testDomain + "/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			"935478af7bf2": map[string]interface{}{
 				"invite":  TestPikeInviteCapability,
 				"outputs": TestPikeOutputsCapability,
