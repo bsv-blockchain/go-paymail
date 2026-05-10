@@ -28,8 +28,8 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -58,8 +58,8 @@ func ExampleClient_SendP2PTransaction() {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -86,8 +86,8 @@ func BenchmarkClient_SendP2PTransaction(b *testing.B) {
 
 	// Raw TX
 	transaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: testAlias + "@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: testAlias + "@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -112,8 +112,8 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -141,8 +141,8 @@ func TestClient_SendP2PTransactionStatusMissingURL(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -168,8 +168,8 @@ func TestClient_SendP2PTransactionStatusMissingAlias(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -195,8 +195,8 @@ func TestClient_SendP2PTransactionStatusMissingDomain(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -243,7 +243,7 @@ func TestClient_SendP2PTransactionStatusMissingHex(t *testing.T) {
 	// Raw TX
 	rawTransaction := &P2PTransaction{
 		Hex:       "",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -269,8 +269,8 @@ func TestClient_SendP2PTransactionStatusMissingReference(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "",
 	}
 
@@ -296,8 +296,8 @@ func TestClient_SendP2PTransactionStatusHTTPError(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -323,8 +323,8 @@ func TestClient_SendP2PTransactionStatusBadRequest(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -350,8 +350,8 @@ func TestClient_SendP2PTransactionStatusPaymailNotFound(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -378,8 +378,8 @@ func TestClient_SendP2PTransactionStatusBadErrorJSON(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -406,8 +406,8 @@ func TestClient_SendP2PTransactionStatusBadJSON(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 
@@ -433,8 +433,8 @@ func TestClient_SendP2PTransactionStatusMissingTxID(t *testing.T) {
 
 	// Raw TX
 	rawTransaction := &P2PTransaction{
-		Hex:       "some-raw-hex",
-		MetaData:  &P2PMetaData{Note: "test note", Sender: "someone@" + testDomain},
+		Hex:       testRawTxHex,
+		MetaData:  &P2PMetaData{Note: testTransactionNote, Sender: "someone@" + testDomain},
 		Reference: "1234567",
 	}
 

@@ -19,16 +19,16 @@ func TestSanitizePaymail(t *testing.T) {
 		expectedDomain  string
 		expectedPaymail string
 	}{
-		{"test@domain.com", "test", "domain.com", "test@domain.com"},
-		{"TEST@domain.com", "test", "domain.com", "test@domain.com"},
-		{"TEST@Domain.com", "test", "domain.com", "test@domain.com"},
-		{"TEST@DomaiN.COM", "test", "domain.com", "test@domain.com"},
-		{"mailto:TEST@DomaiN.COM", "test", "domain.com", "test@domain.com"},
-		{"MailTO:TEST@DomaiN.COM", "test", "domain.com", "test@domain.com"},
-		{"@DomaiN.COM", "", "domain.com", ""},
-		{"test@", "test", "", ""},
-		{"test@domain", "test", "domain", "test@domain"},
-		{"domain.com", "domain.com", "", ""},
+		{testPaymailInput, testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"TEST@domain.com", testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"TEST@Domain.com", testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"TEST@DomaiN.COM", testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"mailto:TEST@DomaiN.COM", testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"MailTO:TEST@DomaiN.COM", testExpectedAlias, testExampleDomain, testPaymailInput},
+		{"@DomaiN.COM", "", testExampleDomain, ""},
+		{"test@", testExpectedAlias, "", ""},
+		{"test@domain", testExpectedAlias, "domain", "test@domain"},
+		{testExampleDomain, testExampleDomain, "", ""},
 		{"1337@Test.com", "1337", testDomain, "1337@" + testDomain},
 	}
 
@@ -67,7 +67,7 @@ func TestValidatePaymail(t *testing.T) {
 		input         string
 		expectedError bool
 	}{
-		{"test@domain.com", false},
+		{testPaymailInput, false},
 		{"test@example", true},
 		{"@example", true},
 		{"example", true},
@@ -117,7 +117,7 @@ func TestValidateDomain(t *testing.T) {
 		{"domain", true},
 		{"example.com", false},
 		{"google.com", false},
-		{"test@domain.com", true},
+		{testPaymailInput, true},
 		{"example..", true},
 		{"example.c", false},
 	}
@@ -147,7 +147,7 @@ func ExampleValidateDomain() {
 // BenchmarkValidateDomain benchmarks the method ValidateDomain()
 func BenchmarkValidateDomain(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = ValidateDomain("domain.com")
+		_ = ValidateDomain(testExampleDomain)
 	}
 }
 
@@ -267,12 +267,12 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 		error    error
 	}{
 		"valid paymail address should be allowed": {
-			paymail: "test@domain.com",
+			paymail: testPaymailInput,
 			isBeta:  false,
 			expected: &SanitisedPaymail{
-				Alias:   "test",
-				Domain:  "domain.com",
-				Address: "test@domain.com",
+				Alias:   testExpectedAlias,
+				Domain:  testExampleDomain,
+				Address: testPaymailInput,
 			},
 		}, "invalid paymail address should error": {
 			paymail: "test@domain",
@@ -282,7 +282,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 			paymail: "$test",
 			isBeta:  false,
 			expected: &SanitisedPaymail{
-				Alias:   "test",
+				Alias:   testExpectedAlias,
 				Domain:  "handcash.io",
 				Address: "test@handcash.io",
 			},
@@ -290,7 +290,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 			paymail: "$test",
 			isBeta:  true,
 			expected: &SanitisedPaymail{
-				Alias:   "test",
+				Alias:   testExpectedAlias,
 				Domain:  "beta.handcash.io",
 				Address: "test@beta.handcash.io",
 			},
@@ -298,7 +298,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 			paymail: "TeST@tEsT.cOM",
 			isBeta:  true,
 			expected: &SanitisedPaymail{
-				Alias:   "test",
+				Alias:   testExpectedAlias,
 				Domain:  "test.com",
 				Address: "test@test.com",
 			},
@@ -306,7 +306,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 			paymail: "1test",
 			isBeta:  false,
 			expected: &SanitisedPaymail{
-				Alias:   "test",
+				Alias:   testExpectedAlias,
 				Domain:  "relayx.io",
 				Address: "test@relayx.io",
 			},
@@ -328,7 +328,7 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 }
 
 func Test_removePort(t *testing.T) {
-	testDomain := "domain.com"
+	testDomain := testExampleDomain
 
 	t.Run("valid removal", func(t *testing.T) {
 		host := testDomain + ":1234"

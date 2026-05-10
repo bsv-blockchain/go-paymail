@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	testBaseHash = "baseHash"
+	testPairHash = "pairHash"
+)
+
 func TestGetOffsetPair(t *testing.T) {
 	t.Parallel()
 
@@ -148,48 +153,48 @@ func TestPrepareNodes(t *testing.T) {
 	}{
 		{
 			name:              "base on left, pair on right",
-			baseLeaf:          BUMPLeaf{Hash: "baseHash", Offset: 0},
+			baseLeaf:          BUMPLeaf{Hash: testBaseHash, Offset: 0},
 			offset:            0,
-			leafInPair:        BUMPLeaf{Hash: "pairHash", Offset: 1},
+			leafInPair:        BUMPLeaf{Hash: testPairHash, Offset: 1},
 			newOffset:         1,
-			expectedLeftNode:  "baseHash",
-			expectedRightNode: "pairHash",
+			expectedLeftNode:  testBaseHash,
+			expectedRightNode: testPairHash,
 		},
 		{
 			name:              "base on right, pair on left",
-			baseLeaf:          BUMPLeaf{Hash: "baseHash", Offset: 1},
+			baseLeaf:          BUMPLeaf{Hash: testBaseHash, Offset: 1},
 			offset:            1,
-			leafInPair:        BUMPLeaf{Hash: "pairHash", Offset: 0},
+			leafInPair:        BUMPLeaf{Hash: testPairHash, Offset: 0},
 			newOffset:         0,
-			expectedLeftNode:  "pairHash",
-			expectedRightNode: "baseHash",
+			expectedLeftNode:  testPairHash,
+			expectedRightNode: testBaseHash,
 		},
 		{
 			name:              "base leaf duplicate uses pair hash",
-			baseLeaf:          BUMPLeaf{Hash: "baseHash", Duplicate: true, Offset: 0},
+			baseLeaf:          BUMPLeaf{Hash: testBaseHash, Duplicate: true, Offset: 0},
 			offset:            0,
-			leafInPair:        BUMPLeaf{Hash: "pairHash", Offset: 1},
+			leafInPair:        BUMPLeaf{Hash: testPairHash, Offset: 1},
 			newOffset:         1,
-			expectedLeftNode:  "pairHash",
-			expectedRightNode: "pairHash",
+			expectedLeftNode:  testPairHash,
+			expectedRightNode: testPairHash,
 		},
 		{
 			name:              "pair leaf duplicate uses base hash",
-			baseLeaf:          BUMPLeaf{Hash: "baseHash", Offset: 0},
+			baseLeaf:          BUMPLeaf{Hash: testBaseHash, Offset: 0},
 			offset:            0,
-			leafInPair:        BUMPLeaf{Hash: "pairHash", Duplicate: true, Offset: 1},
+			leafInPair:        BUMPLeaf{Hash: testPairHash, Duplicate: true, Offset: 1},
 			newOffset:         1,
-			expectedLeftNode:  "baseHash",
-			expectedRightNode: "baseHash",
+			expectedLeftNode:  testBaseHash,
+			expectedRightNode: testBaseHash,
 		},
 		{
 			name:              "both duplicate - uses each others hash",
-			baseLeaf:          BUMPLeaf{Hash: "baseHash", Duplicate: true, Offset: 0},
+			baseLeaf:          BUMPLeaf{Hash: testBaseHash, Duplicate: true, Offset: 0},
 			offset:            0,
-			leafInPair:        BUMPLeaf{Hash: "pairHash", Duplicate: true, Offset: 1},
+			leafInPair:        BUMPLeaf{Hash: testPairHash, Duplicate: true, Offset: 1},
 			newOffset:         1,
-			expectedLeftNode:  "pairHash", // baseLeaf.Duplicate uses leafInPair.Hash
-			expectedRightNode: "baseHash", // leafInPair.Duplicate uses baseLeaf.Hash
+			expectedLeftNode:  testPairHash, // baseLeaf.Duplicate uses leafInPair.Hash
+			expectedRightNode: testBaseHash, // leafInPair.Duplicate uses baseLeaf.Hash
 		},
 	}
 

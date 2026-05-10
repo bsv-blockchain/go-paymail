@@ -7,7 +7,7 @@ import "testing"
 func FuzzSanitizeEmail(f *testing.F) {
 	// Seed corpus with representative examples
 	seeds := []string{
-		"test@domain.com",
+		testPaymailInput,
 		"TEST@DOMAIN.COM",
 		"mailto:user@example.com",
 		"MAILTO:USER@EXAMPLE.COM",
