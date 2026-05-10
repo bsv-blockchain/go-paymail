@@ -11,7 +11,7 @@ func TestGenerateServiceURL(t *testing.T) {
 	t.Parallel()
 
 	t.Run("valid values", func(t *testing.T) {
-		u, err := generateServiceURL("https://", "test.com", "v1", "bsvalias")
+		u, err := generateServiceURL("https://", testServerDomain, "v1", "bsvalias")
 		require.NoError(t, err)
 		assert.Equal(t, "https://test.com/v1/bsvalias", u)
 	})
@@ -22,7 +22,7 @@ func TestGenerateServiceURL(t *testing.T) {
 	})
 
 	t.Run("missing prefix", func(t *testing.T) {
-		_, err := generateServiceURL("", "test.com", "v1", "")
+		_, err := generateServiceURL("", testServerDomain, "v1", "")
 		assert.Error(t, err)
 	})
 

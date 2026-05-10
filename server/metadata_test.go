@@ -13,10 +13,10 @@ func TestCreateMetadata(t *testing.T) {
 
 	t.Run("invalid empty request", func(t *testing.T) {
 		req := new(http.Request)
-		md := CreateMetadata(req, "tester", "test.com", "optional")
+		md := CreateMetadata(req, "tester", testServerDomain, "optional")
 		assert.NotNil(t, md)
 		assert.Equal(t, "tester", md.Alias)
-		assert.Equal(t, "test.com", md.Domain)
+		assert.Equal(t, testServerDomain, md.Domain)
 		assert.Equal(t, "optional", md.Note)
 		assert.Empty(t, md.UserAgent)
 		assert.Empty(t, md.RequestURI)
