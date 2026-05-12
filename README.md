@@ -1,3 +1,5 @@
+> ⚠️ **This repository is being archived.** Development has moved to the [go-stack monorepo](https://github.com/bsv-blockchain/go-stack). Open issues will be migrated there. This repository will be archived in the coming days — please open new issues and PRs in the monorepo going forward.
+
 <div align="center">
 
 # ✉️&nbsp;&nbsp;go-paymail
