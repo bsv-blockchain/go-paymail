@@ -81,7 +81,7 @@ func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
 		return err
 	}
 
-	row.PrivateKey = hex.EncodeToString((key.Serialize()))
+	row.PrivateKey = hex.EncodeToString(key.Serialize())
 
 	addr, err := script.NewAddressFromPublicKey(key.PubKey(), true)
 	if err != nil {

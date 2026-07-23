@@ -138,7 +138,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -162,7 +163,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -182,7 +184,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusNotFound,
 				`{"message": "not found"}`,
@@ -206,7 +209,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -230,7 +234,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [{script: 76a9143e2d1d795f8acaa7957045cc59376177eb04a3c588ac","satoshis": 100}],"reference": "z0bac4ec-6f15-42de-9ef4-e60bfdabf4f7"}`,
@@ -255,7 +260,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [{"script": "76a9143e2d1d795f8acaa7957045cc59376177eb04a3c588ac","satoshis": 100}],"reference": ""}`,
@@ -280,7 +286,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [],"reference": "12345678"}`,
@@ -305,7 +312,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [{"script": "12345678","satoshis": 100}],"reference": "12345678"}`,
@@ -330,7 +338,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [{"script": "","satoshis": 100}],"reference": "12345678"}`,
@@ -356,7 +365,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"outputs": [{"script": "0","satoshis": 100}],"reference": "12345678"}`,
@@ -382,7 +392,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 // mockP2PPaymentDestination is used for mocking the response
 func mockP2PPaymentDestination(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
+	httpmock.RegisterResponder(
+		http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"outputs": [{"script": "76a9143e2d1d795f8acaa7957045cc59376177eb04a3c588ac","satoshis": 100}],"reference": "z0bac4ec-6f15-42de-9ef4-e60bfdabf4f7"}`,
@@ -428,8 +439,9 @@ func BenchmarkClient_GetP2PPaymentDestination(b *testing.B) {
 	paymentRequest := &PaymentRequest{Satoshis: 100}
 
 	for i := 0; i < b.N; i++ {
-		_, _ = client.GetP2PPaymentDestination(""+
-			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
+		_, _ = client.GetP2PPaymentDestination(
+			""+
+				testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,

@@ -77,7 +77,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -95,7 +96,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -111,7 +113,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -127,7 +130,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -140,7 +144,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -158,7 +163,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": {"6745385c3fc0": false,
@@ -178,7 +184,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusNotModified,
 				`{"`+DefaultServiceName+`": "","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}",
@@ -197,7 +204,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.RegisterResponder(
+			http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusNotModified,
 				`{"`+DefaultServiceName+`": ,capabilities: {6745385c3fc0: ,pki: `+testServerURL+`id/{alias}@{domain.tld}",
@@ -256,7 +264,8 @@ func mockCapabilities(statusCode int) {
 // mockCapabilitiesNetwork is used for mocking the response on a specific network
 func mockCapabilitiesNetwork(statusCode int, n Network) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.URLSuffix(),
+	httpmock.RegisterResponder(
+		http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.URLSuffix(),
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities":
@@ -269,7 +278,8 @@ func mockCapabilitiesNetwork(statusCode int, n Network) {
 // mockCapabilitiesWithPIKE is used for mocking the response including the PIKE capability
 func mockCapabilitiesWithPIKE(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/bsvalias",
+	httpmock.RegisterResponder(
+		http.MethodGet, "https://"+testDomain+":443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			statusCode,
 			`{
@@ -693,7 +703,8 @@ func TestClient_AddInviteRequest(t *testing.T) {
 
 	t.Run("invite request error", func(t *testing.T) {
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, "https://example.com/v1/bsvalias/contact/invite/%7Balias%7D@%7Bdomain.tld%7D",
+		httpmock.RegisterResponder(
+			http.MethodPost, "https://example.com/v1/bsvalias/contact/invite/%7Balias%7D@%7Bdomain.tld%7D",
 			httpmock.NewStringResponder(http.StatusBadRequest, `{"message": "bad request"}`),
 		)
 
@@ -711,7 +722,8 @@ func TestClient_AddInviteRequest(t *testing.T) {
 // mockInviteRequest is used for mocking the invite request response
 func mockInviteRequest(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://"+testDomain+"/v1/bsvalias/contact/invite/alias@domain.tld",
+	httpmock.RegisterResponder(
+		http.MethodPost, "https://"+testDomain+"/v1/bsvalias/contact/invite/alias@domain.tld",
 		httpmock.NewStringResponder(
 			statusCode,
 			`{

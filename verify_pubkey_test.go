@@ -106,7 +106,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -126,7 +127,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -142,7 +144,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -162,7 +165,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"bsvalias": 1.0,handle: `+testAlias+`@`+testDomain+`","pubkey": "`+testPubKey+`","match": true}`,
@@ -185,7 +189,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"bsvalias": "`+DefaultBsvAliasVersion+`","handle": "","pubkey": "`+testPubKey+`","match": true}`,
@@ -206,7 +211,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"bsvalias": "","handle": "`+testAlias+`@`+testDomain+`","pubkey": "`+testPubKey+`","match": true}`,
@@ -227,7 +233,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"bsvalias": "`+DefaultBsvAliasVersion+`","handle": "`+testAlias+`@`+testDomain+`","pubkey": "","match": true}`,
@@ -248,7 +255,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"bsvalias": "`+DefaultBsvAliasVersion+`","handle": "`+testAlias+`@`+testDomain+`","pubkey": "wrong","match": true}`,

@@ -19,7 +19,8 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/"+testAlias+"@"+testDomain,
+	httpmock.RegisterResponder(
+		http.MethodPost, testServerURL+"receive-transaction/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`,
@@ -94,7 +95,8 @@ func BenchmarkClient_SendP2PTransaction(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, _ = client.SendP2PTransaction(
 			testServerURL+"receive-transaction/{alias}@{domain.tld}",
-			testAlias, testDomain, transaction)
+			testAlias, testDomain, transaction,
+		)
 	}
 }
 

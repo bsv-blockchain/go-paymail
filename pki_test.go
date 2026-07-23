@@ -46,7 +46,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -63,7 +64,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -80,7 +82,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "","handle": "`+testAlias+`@`+testDomain+`","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -98,7 +101,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": 1,pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10}`,
@@ -117,7 +121,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": "invalid@`+testDomain+`","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -135,7 +140,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": "`+testAlias+`@`+testDomain+`","pubkey": ""}`,
@@ -154,7 +160,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`",
@@ -204,7 +211,8 @@ func TestClient_GetPKI(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -217,7 +225,8 @@ func TestClient_GetPKI(t *testing.T) {
 // mockGetPKI is used for mocking the response
 func mockGetPKI(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+	httpmock.RegisterResponder(
+		http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`",
