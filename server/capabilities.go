@@ -24,7 +24,8 @@ type (
 )
 
 func (c *Configuration) SetGenericCapabilities() {
-	_addCapabilities(c.callableCapabilities,
+	_addCapabilities(
+		c.callableCapabilities,
 		CallableCapabilitiesMap{
 			paymail.BRFCPaymentDestination: CallableCapability{
 				Path:    fmt.Sprintf("/address/%s", PaymailAddressTemplate),
@@ -48,7 +49,8 @@ func (c *Configuration) SetGenericCapabilities() {
 			},
 		},
 	)
-	_addCapabilities(c.staticCapabilities,
+	_addCapabilities(
+		c.staticCapabilities,
 		StaticCapabilitiesMap{
 			paymail.BRFCSenderValidation: c.SenderValidationEnabled,
 		},
@@ -56,7 +58,8 @@ func (c *Configuration) SetGenericCapabilities() {
 }
 
 func (c *Configuration) SetP2PCapabilities() {
-	_addCapabilities(c.callableCapabilities,
+	_addCapabilities(
+		c.callableCapabilities,
 		CallableCapabilitiesMap{
 			paymail.BRFCP2PTransactions: CallableCapability{
 				Path:    fmt.Sprintf("/receive-transaction/%s", PaymailAddressTemplate),
@@ -73,7 +76,8 @@ func (c *Configuration) SetP2PCapabilities() {
 }
 
 func (c *Configuration) SetBeefCapabilities() {
-	_addCapabilities(c.callableCapabilities,
+	_addCapabilities(
+		c.callableCapabilities,
 		CallableCapabilitiesMap{
 			paymail.BRFCBeefTransaction: CallableCapability{
 				Path:    fmt.Sprintf("/beef/%s", PaymailAddressTemplate),
@@ -85,7 +89,8 @@ func (c *Configuration) SetBeefCapabilities() {
 }
 
 func (c *Configuration) SetPikeContactCapabilities() {
-	_addNestedCapabilities(c.nestedCapabilities,
+	_addNestedCapabilities(
+		c.nestedCapabilities,
 		NestedCapabilitiesMap{
 			paymail.BRFCPike: CallableCapabilitiesMap{
 				paymail.BRFCPikeInvite: CallableCapability{
@@ -99,7 +104,8 @@ func (c *Configuration) SetPikeContactCapabilities() {
 }
 
 func (c *Configuration) SetPikePaymentCapabilities() {
-	_addNestedCapabilities(c.nestedCapabilities,
+	_addNestedCapabilities(
+		c.nestedCapabilities,
 		NestedCapabilitiesMap{
 			paymail.BRFCPike: CallableCapabilitiesMap{
 				paymail.BRFCPikeOutputs: CallableCapability{
