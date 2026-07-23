@@ -74,7 +74,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -91,7 +92,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -104,7 +106,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -121,7 +124,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"name": MrZ,avatar: https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -140,7 +144,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 // mockGetPublicProfile is used for mocking the response
 func mockGetPublicProfile(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
+	httpmock.RegisterResponder(
+		http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
 			statusCode, `{"name": "`+testName+`","avatar": "`+testAvatar+`"}`,
 		),

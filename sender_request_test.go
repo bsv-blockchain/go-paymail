@@ -43,7 +43,7 @@ func TestSenderRequest_Sign(t *testing.T) {
 
 	t.Run("invalid dt", func(t *testing.T) {
 		senderRequest.Dt = ""
-		sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
+		sigBytes, err = senderRequest.Sign(hex.EncodeToString(key.Serialize()))
 		require.Error(t, err)
 		assert.Empty(t, sigBytes)
 	})
@@ -51,14 +51,14 @@ func TestSenderRequest_Sign(t *testing.T) {
 	t.Run("invalid sender handle", func(t *testing.T) {
 		senderRequest.Dt = time.Now().UTC().Format(time.RFC3339)
 		senderRequest.SenderHandle = ""
-		sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
+		sigBytes, err = senderRequest.Sign(hex.EncodeToString(key.Serialize()))
 		require.Error(t, err)
 		assert.Empty(t, sigBytes)
 	})
 
 	t.Run("valid signature", func(t *testing.T) {
 		senderRequest.SenderHandle = testAlias + "@" + testDomain
-		hexKey := hex.EncodeToString((key.Serialize()))
+		hexKey := hex.EncodeToString(key.Serialize())
 		sigBytes, err = senderRequest.Sign(hexKey)
 		require.NoError(t, err)
 		assert.NotEmpty(t, sigBytes)
@@ -135,7 +135,7 @@ func TestSenderRequest_Verify(t *testing.T) {
 
 	// Sign
 	var sigBytes []byte
-	sigBytes, err = senderRequest.Sign(hex.EncodeToString((key.Serialize())))
+	sigBytes, err = senderRequest.Sign(hex.EncodeToString(key.Serialize()))
 	require.NoError(t, err)
 	assert.NotEmpty(t, sigBytes)
 

@@ -163,7 +163,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -188,7 +189,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(ErrTestRequestFailed),
 		)
 
@@ -209,7 +211,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -234,7 +237,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusNotFound,
 				`{"message": "not found"}`,
@@ -259,7 +263,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"output: `+testOutput+`"}`,
@@ -285,7 +290,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"output": ""}`,
@@ -311,7 +317,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"output": "12345678"}`,
@@ -337,7 +344,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"output": "7e00bb007d4960727eb11d92a052502c"}`,
@@ -363,7 +371,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 		client := newTestClient(t)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+		httpmock.RegisterResponder(
+			http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 			httpmock.NewStringResponder(
 				http.StatusOK,
 				`{"output": "0"}`,
@@ -389,7 +398,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 // mockResolveAddress is used for mocking the response
 func mockResolveAddress(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
+	httpmock.RegisterResponder(
+		http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"output": "`+testOutput+`"}`,

@@ -67,7 +67,8 @@ func TestClient_GetOutputsTemplate(t *testing.T) {
 
 	t.Run("PIKE outputs response error", func(t *testing.T) {
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodPost, "https://example.com/v1/bsvalias/pike/outputs/alias@domain.tld",
+		httpmock.RegisterResponder(
+			http.MethodPost, "https://example.com/v1/bsvalias/pike/outputs/alias@domain.tld",
 			httpmock.NewStringResponder(http.StatusBadRequest, `{"message": "bad request"}`),
 		)
 
@@ -84,7 +85,8 @@ func TestClient_GetOutputsTemplate(t *testing.T) {
 
 // mockPIKEOutputs is used for mocking the PIKE outputs response
 func mockPIKEOutputs(statusCode int, amount uint64) {
-	httpmock.RegisterResponder(http.MethodPost, "https://"+testDomain+"/v1/bsvalias/pike/outputs/alias@domain.tld",
+	httpmock.RegisterResponder(
+		http.MethodPost, "https://"+testDomain+"/v1/bsvalias/pike/outputs/alias@domain.tld",
 		httpmock.NewStringResponder(
 			statusCode,
 			`{
