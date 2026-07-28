@@ -3,10 +3,10 @@ module github.com/bsv-blockchain/go-paymail
 go 1.25.0
 
 require (
-	github.com/bsv-blockchain/go-sdk v1.3.1
+	github.com/bsv-blockchain/go-sdk v1.3.2
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-resty/resty/v2 v2.17.2
-	github.com/jarcoal/httpmock v1.4.1
+	github.com/jarcoal/httpmock v1.4.2
 	github.com/miekg/dns v1.1.72
 	github.com/rs/zerolog v1.35.1
 	github.com/stretchr/testify v1.11.1
