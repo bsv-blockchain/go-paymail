@@ -1,5 +1,5 @@
-github.com/bsv-blockchain/go-sdk v1.5.1 h1:NGqtUAVjSfwrWPEX2bFNt7yAuwRa0b3G6El4tHZDNHc=
-github.com/bsv-blockchain/go-sdk v1.5.1/go.mod h1:clGHSZoOwrnqJrzEw4VHYZk3JQXbrr+mnybCXZCdrt4=
+github.com/bsv-blockchain/go-sdk v1.5.2 h1:CMRF9HcXQxvDgQK0n6wTy4/RyoGGL4HAjzHmCpqCgCs=
+github.com/bsv-blockchain/go-sdk v1.5.2/go.mod h1:clGHSZoOwrnqJrzEw4VHYZk3JQXbrr+mnybCXZCdrt4=
 github.com/bytedance/gopkg v0.1.4 h1:oZnQwnX82KAIWb7033bEwtxvTqXcYMxDBaQxo5JJHWM=
 github.com/bytedance/gopkg v0.1.4/go.mod h1:v1zWfPm21Fb+OsyXN2VAHdL6TBb2L88anLQgdyje6R4=
 github.com/bytedance/sonic v1.15.3 h1:P3akjLPBtV/i6bHC6LbcLjY3KuoOvfiqF8wFHeP5IhY=
