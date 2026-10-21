@@ -70,8 +70,8 @@ func TestWithServer(t *testing.T) {
 		assert.NotEmpty(t, capabilities)
 
 		// Check if all callable capabilities are accessible by trying to make a request to each one of them
-		for _, cap := range capabilities {
-			capUrl, ok := cap.(string)
+		for _, capability := range capabilities {
+			capUrl, ok := capability.(string)
 			if !ok {
 				continue // skip static capabilities
 			}

@@ -171,15 +171,15 @@ func (c *Configuration) EnrichCapabilities(host string) (*paymail.CapabilitiesPa
 		BsvAlias:     c.BSVAliasVersion,
 		Capabilities: make(map[string]interface{}),
 	}
-	for key, cap := range c.staticCapabilities {
-		payload.Capabilities[key] = cap
+	for key, capability := range c.staticCapabilities {
+		payload.Capabilities[key] = capability
 	}
-	for key, cap := range c.callableCapabilities {
-		payload.Capabilities[key] = serviceUrl + cap.Path
+	for key, capability := range c.callableCapabilities {
+		payload.Capabilities[key] = serviceUrl + capability.Path
 	}
-	for key, cap := range c.nestedCapabilities {
+	for key, capability := range c.nestedCapabilities {
 		payload.Capabilities[key] = make(map[string]interface{})
-		for nestedKey, nestedCap := range cap {
+		for nestedKey, nestedCap := range capability {
 			nestedObj, ok := payload.Capabilities[key].(map[string]interface{})
 			if !ok {
 				return nil, errors.ErrCastingNestedCapabilities
