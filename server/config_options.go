@@ -78,8 +78,8 @@ func WithPikePaymentCapabilities() ConfigOps {
 // WithCapabilities will modify the capabilities
 func WithCapabilities(customCapabilities map[string]any) ConfigOps {
 	return func(c *Configuration) {
-		for key, cap := range customCapabilities {
-			switch typedCap := cap.(type) {
+		for key, capability := range customCapabilities {
+			switch typedCap := capability.(type) {
 			case CallableCapability:
 				c.callableCapabilities[key] = typedCap
 			default:
