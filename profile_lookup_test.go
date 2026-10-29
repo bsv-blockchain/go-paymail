@@ -18,8 +18,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// The BRC-235 test vector
+// The BRC-235 test vector, which names example.com
 const (
+	profileTestDomain = "example.com"
 	profileVectorKey  = "025ad43a22ac38d0bc1f8bacaabb323b5d634703b7a774c4268f6a09e4ddf79097"
 	profileVectorJSON = `{
   "type": "SbatVXXssDW3AO0J9bxIljkHGbPBGCVAXg94gXFf0cE=",
@@ -94,20 +95,20 @@ func TestVerifyProfileCertificate(t *testing.T) {
 
 	t.Run("verifies the BRC-235 test vector", func(t *testing.T) {
 		profile, err := VerifyProfileCertificate(ctx, []byte(profileVectorJSON), ProfileExpectation{
-			Domain: "example.com", Paymail: "Alice@Example.com", IdentityKey: strings.ToUpper(profileVectorKey),
+			Domain: profileTestDomain, Paymail: "Alice@Example.com", IdentityKey: strings.ToUpper(profileVectorKey),
 		})
 		require.NoError(t, err)
 		assert.Equal(t, profileVectorKey, profile.IdentityKey)
 		assert.Equal(t, "alice@example.com", profile.Paymail)
 		assert.Equal(t, "alice", profile.Handle)
-		assert.Equal(t, "example.com", profile.Domain)
+		assert.Equal(t, profileTestDomain, profile.Domain)
 		assert.Equal(t, "Alice", profile.DisplayName)
 		assert.Equal(t, "2026-10-29T12:00:00.000Z", profile.IssuedAt)
 	})
 
 	t.Run("verifies a certificate signed here", func(t *testing.T) {
 		raw := signProfile(ctx, t, strings.Repeat("0", 63)+"2", "bob@example.com")
-		profile, err := VerifyProfileCertificate(ctx, raw, ProfileExpectation{Domain: "example.com"})
+		profile, err := VerifyProfileCertificate(ctx, raw, ProfileExpectation{Domain: profileTestDomain})
 		require.NoError(t, err)
 		assert.Equal(t, "bob@example.com", profile.Paymail)
 	})
@@ -117,44 +118,44 @@ func TestVerifyProfileCertificate(t *testing.T) {
 		expect ProfileExpectation
 	}{
 		"another domain":        {[]byte(profileVectorJSON), ProfileExpectation{Domain: "example.org"}},
-		"another exact paymail": {[]byte(profileVectorJSON), ProfileExpectation{Domain: "example.com", Paymail: "bob@example.com"}},
-		"another reverse key":   {[]byte(profileVectorJSON), ProfileExpectation{Domain: "example.com", IdentityKey: "03" + strings.Repeat("1", 64)}},
+		"another exact paymail": {[]byte(profileVectorJSON), ProfileExpectation{Domain: profileTestDomain, Paymail: "bob@example.com"}},
+		"another reverse key":   {[]byte(profileVectorJSON), ProfileExpectation{Domain: profileTestDomain, IdentityKey: "03" + strings.Repeat("1", 64)}},
 		"no domain":             {[]byte(profileVectorJSON), ProfileExpectation{}},
 		"a changed field": {profileVectorWith(t, func(m map[string]any) {
 			m["fields"].(map[string]any)["displayName"] = "Mallory"
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"a tombstone": {profileVectorWith(t, func(m map[string]any) {
 			m["fields"].(map[string]any)["released"] = "true"
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"a different type": {profileVectorWith(t, func(m map[string]any) {
 			m["type"] = "TbatVXXssDW3AO0J9bxIljkHGbPBGCVAXg94gXFf0cE="
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"subject not certifier": {profileVectorWith(t, func(m map[string]any) {
 			m["certifier"] = "03" + strings.Repeat("1", 64)
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"a revocation outpoint": {profileVectorWith(t, func(m map[string]any) {
 			m["revocationOutpoint"] = strings.Repeat("1", 64) + ".0"
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"a short serial": {profileVectorWith(t, func(m map[string]any) {
 			m["serialNumber"] = "AQID"
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"no issuedAt": {profileVectorWith(t, func(m map[string]any) {
 			delete(m["fields"].(map[string]any), "issuedAt")
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"an uppercase paymail": {profileVectorWith(t, func(m map[string]any) {
 			m["fields"].(map[string]any)["paymail"] = "Alice@example.com"
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"a non-string field": {profileVectorWith(t, func(m map[string]any) {
 			m["fields"].(map[string]any)["bio"] = 1
-		}), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
 		"an oversized field": {profileVectorWith(t, func(m map[string]any) {
 			m["fields"].(map[string]any)["bio"] = strings.Repeat("x", 1025)
-		}), ProfileExpectation{Domain: "example.com"}},
-		"no fields":  {profileVectorWith(t, func(m map[string]any) { delete(m, "fields") }), ProfileExpectation{Domain: "example.com"}},
-		"an array":   {[]byte("[" + profileVectorJSON + "]"), ProfileExpectation{Domain: "example.com"}},
-		"not json":   {[]byte("nope"), ProfileExpectation{Domain: "example.com"}},
-		"too large":  {[]byte(strings.Repeat(" ", ProfileMaxCertificateBytes+1)), ProfileExpectation{Domain: "example.com"}},
-		"no subject": {profileVectorWith(t, func(m map[string]any) { delete(m, "subject") }), ProfileExpectation{Domain: "example.com"}},
+		}), ProfileExpectation{Domain: profileTestDomain}},
+		"no fields":  {profileVectorWith(t, func(m map[string]any) { delete(m, "fields") }), ProfileExpectation{Domain: profileTestDomain}},
+		"an array":   {[]byte("[" + profileVectorJSON + "]"), ProfileExpectation{Domain: profileTestDomain}},
+		"not json":   {[]byte("nope"), ProfileExpectation{Domain: profileTestDomain}},
+		"too large":  {[]byte(strings.Repeat(" ", ProfileMaxCertificateBytes+1)), ProfileExpectation{Domain: profileTestDomain}},
+		"no subject": {profileVectorWith(t, func(m map[string]any) { delete(m, "subject") }), ProfileExpectation{Domain: profileTestDomain}},
 	}
 	for name, tc := range cases {
 		t.Run("rejects "+name, func(t *testing.T) {
@@ -170,7 +171,7 @@ func TestNormalizeProfileLookupQuery(t *testing.T) {
 		"al": "al", " Alice ": "alice", "alice@example.com": "alice", "alice@exa": "alice", "alice@": "alice",
 		"alice@example.org": "", "a": "", strings.Repeat("x", 33): "", "al ice": "", "..": "", "a@b@example.com": "",
 	} {
-		normalized, ok := NormalizeProfileLookupQuery(query, "example.com")
+		normalized, ok := NormalizeProfileLookupQuery(query, profileTestDomain)
 		assert.Equal(t, expected, normalized, query)
 		assert.Equal(t, expected != "", ok, query)
 	}
@@ -187,7 +188,7 @@ func TestClient_LookupProfiles(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, searchURL+"al",
 			httpmock.NewStringResponder(http.StatusOK, "["+string(tampered)+","+profileVectorJSON+"]"))
 
-		response, err := client.LookupProfiles(profileLookupURL, "example.com", "Al")
+		response, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "Al")
 		require.NoError(t, err)
 		require.Len(t, response.Profiles, 1)
 		assert.Equal(t, "alice@example.com", response.Profiles[0].Paymail)
@@ -200,12 +201,12 @@ func TestClient_LookupProfiles(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, searchURL+"alice",
 			httpmock.NewStringResponder(http.StatusOK, "["+string(other)+","+profileVectorJSON+"]"))
 
-		exact, err := client.LookupProfiles(profileLookupURL, "example.com", "alice@example.com")
+		exact, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "alice@example.com")
 		require.NoError(t, err)
 		require.Len(t, exact.Profiles, 1)
 		assert.Equal(t, profileVectorKey, exact.Profiles[0].IdentityKey)
 
-		partial, err := client.LookupProfiles(profileLookupURL, "example.com", "alice")
+		partial, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "alice")
 		require.NoError(t, err)
 		assert.Len(t, partial.Profiles, 2)
 	})
@@ -216,7 +217,7 @@ func TestClient_LookupProfiles(t *testing.T) {
 		many := strings.TrimSuffix(strings.Repeat(profileVectorJSON+",", 25), ",")
 		httpmock.RegisterResponder(http.MethodGet, searchURL+"al", httpmock.NewStringResponder(http.StatusOK, "["+many+"]"))
 
-		response, err := client.LookupProfiles(profileLookupURL, "example.com", "al")
+		response, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "al")
 		require.NoError(t, err)
 		assert.Len(t, response.Profiles, ProfileLookupMaxResults)
 	})
@@ -224,7 +225,7 @@ func TestClient_LookupProfiles(t *testing.T) {
 	t.Run("does not ask for a query the host would not search", func(t *testing.T) {
 		client := newTestClient(t)
 		httpmock.Reset()
-		response, err := client.LookupProfiles(profileLookupURL, "example.com", "a")
+		response, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "a")
 		require.NoError(t, err)
 		assert.Empty(t, response.Profiles)
 		assert.Equal(t, 0, httpmock.GetTotalCallCount())
@@ -232,9 +233,9 @@ func TestClient_LookupProfiles(t *testing.T) {
 
 	t.Run("rejects an unusable template", func(t *testing.T) {
 		client := newTestClient(t)
-		_, err := client.LookupProfiles("https://paymail.example.com/handle", "example.com", "al")
+		_, err := client.LookupProfiles("https://paymail.example.com/handle", profileTestDomain, "al")
 		require.ErrorIs(t, err, ErrProfileLookupInvalidURL)
-		_, err = client.LookupProfiles("http://paymail.example.com/handle/{query}", "example.com", "al")
+		_, err = client.LookupProfiles("http://paymail.example.com/handle/{query}", profileTestDomain, "al")
 		require.ErrorIs(t, err, ErrProfileLookupInvalidURL)
 	})
 
@@ -242,11 +243,11 @@ func TestClient_LookupProfiles(t *testing.T) {
 		client := newTestClient(t)
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, searchURL+"al", httpmock.NewStringResponder(http.StatusOK, profileVectorJSON))
-		_, err := client.LookupProfiles(profileLookupURL, "example.com", "al")
+		_, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "al")
 		require.ErrorIs(t, err, ErrProfileLookupBadResponse)
 
 		httpmock.RegisterResponder(http.MethodGet, searchURL+"al", httpmock.NewStringResponder(http.StatusTooManyRequests, `{"message":"slow down"}`))
-		response, err := client.LookupProfiles(profileLookupURL, "example.com", "al")
+		response, err := client.LookupProfiles(profileLookupURL, profileTestDomain, "al")
 		require.ErrorIs(t, err, ErrProfileLookupBadResponse)
 		assert.Equal(t, http.StatusTooManyRequests, response.StatusCode)
 	})
@@ -267,29 +268,29 @@ func TestClient_ReverseLookupProfile(t *testing.T) {
 		httpmock.NewStringResponder(http.StatusServiceUnavailable, `{"message":"busy"}`))
 
 	t.Run("returns the verified profile", func(t *testing.T) {
-		response, err := client.ReverseLookupProfile(profileReverseURL, "example.com", strings.ToUpper(profileVectorKey))
+		response, err := client.ReverseLookupProfile(profileReverseURL, profileTestDomain, strings.ToUpper(profileVectorKey))
 		require.NoError(t, err)
 		require.NotNil(t, response.Profile)
 		assert.Equal(t, "alice@example.com", response.Profile.Paymail)
 	})
 
 	t.Run("returns no profile for a certificate of another key or a 404", func(t *testing.T) {
-		response, err := client.ReverseLookupProfile(profileReverseURL, "example.com", other)
+		response, err := client.ReverseLookupProfile(profileReverseURL, profileTestDomain, other)
 		require.NoError(t, err)
 		assert.Nil(t, response.Profile)
 
-		response, err = client.ReverseLookupProfile(profileReverseURL, "example.com", "02"+strings.Repeat("2", 64))
+		response, err = client.ReverseLookupProfile(profileReverseURL, profileTestDomain, "02"+strings.Repeat("2", 64))
 		require.NoError(t, err)
 		assert.Nil(t, response.Profile)
 		assert.Equal(t, http.StatusNotFound, response.StatusCode)
 	})
 
 	t.Run("reports host errors and bad input", func(t *testing.T) {
-		_, err := client.ReverseLookupProfile(profileReverseURL, "example.com", "02"+strings.Repeat("3", 64))
+		_, err := client.ReverseLookupProfile(profileReverseURL, profileTestDomain, "02"+strings.Repeat("3", 64))
 		require.ErrorIs(t, err, ErrProfileLookupBadResponse)
-		_, err = client.ReverseLookupProfile(profileReverseURL, "example.com", "nope")
+		_, err = client.ReverseLookupProfile(profileReverseURL, profileTestDomain, "nope")
 		require.ErrorIs(t, err, ErrProfileLookupInvalidKey)
-		_, err = client.ReverseLookupProfile("https://paymail.example.com/identityKey", "example.com", profileVectorKey)
+		_, err = client.ReverseLookupProfile("https://paymail.example.com/identityKey", profileTestDomain, profileVectorKey)
 		require.ErrorIs(t, err, ErrProfileLookupInvalidURL)
 	})
 }
