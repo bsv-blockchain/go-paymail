@@ -1,3 +1,5 @@
 # BRC-235 test vectors: a public identity key, not a secret
 1af75441205e43fa6eb925bc1424c730f265087d:profile_lookup_test.go:generic-api-key:23
 1af75441205e43fa6eb925bc1424c730f265087d:server/profile_lookup_test.go:generic-api-key:21
+e12f2cf237fc29241ea2145023585c61ce83fe07:profile_lookup_test.go:generic-api-key:24
+e12f2cf237fc29241ea2145023585c61ce83fe07:server/profile_lookup_test.go:generic-api-key:21
