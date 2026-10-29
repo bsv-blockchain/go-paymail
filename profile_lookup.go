@@ -165,26 +165,35 @@ func CheckProfileCertificate(raw []byte, domain string) (*ProfileCertificate, er
 	if cert.RevocationOutpoint != ProfileRevocationOutpoint {
 		return nil, invalidProfile("revocationOutpoint must be the zero outpoint")
 	}
-	if len(cert.Fields) > profileMaxFields {
-		return nil, invalidProfile("too many fields")
-	}
-	for name, value := range cert.Fields {
-		if len(name) >= profileMaxFieldName || len(value) > profileMaxFieldValue || !utf8.ValidString(value) {
-			return nil, invalidProfile("field " + name + " exceeds the limits")
-		}
-	}
-	if cert.Fields["released"] == "true" {
-		return nil, invalidProfile("released")
-	}
-	if _, err := time.Parse(time.RFC3339Nano, cert.Fields["issuedAt"]); err != nil {
-		return nil, invalidProfile("issuedAt must be RFC 3339")
-	}
-	handle, paymailDomain, found := strings.Cut(cert.Fields["paymail"], "@")
-	if !found || !IsValidProfileHandle(handle) || domain == "" ||
-		paymailDomain != strings.ToLower(strings.TrimSpace(domain)) {
-		return nil, invalidProfile("paymail must be a lowercase handle at " + domain)
+	if err := checkProfileFields(cert.Fields, domain); err != nil {
+		return nil, err
 	}
 	return &cert, nil
+}
+
+// checkProfileFields applies the BRC-235 field limits and the paymail, issuedAt
+// and released rules
+func checkProfileFields(fields map[string]string, domain string) error {
+	if len(fields) > profileMaxFields {
+		return invalidProfile("too many fields")
+	}
+	for name, value := range fields {
+		if len(name) >= profileMaxFieldName || len(value) > profileMaxFieldValue || !utf8.ValidString(value) {
+			return invalidProfile("field " + name + " exceeds the limits")
+		}
+	}
+	if fields["released"] == "true" {
+		return invalidProfile("released")
+	}
+	if _, err := time.Parse(time.RFC3339Nano, fields["issuedAt"]); err != nil {
+		return invalidProfile("issuedAt must be RFC 3339")
+	}
+	handle, paymailDomain, found := strings.Cut(fields["paymail"], "@")
+	if !found || !IsValidProfileHandle(handle) || domain == "" ||
+		paymailDomain != strings.ToLower(strings.TrimSpace(domain)) {
+		return invalidProfile("paymail must be a lowercase handle at " + domain)
+	}
+	return nil
 }
 
 // VerifyProfileCertificate applies every BRC-235 client verification rule, signature
