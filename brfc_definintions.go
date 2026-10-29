@@ -20,6 +20,8 @@ const (
 	BRFCVerifyPublicKeyOwner           = "a9f510c16bde"       // more info: http://bsvalias.org/05-verify-public-key-owner.html
 	BRFCBeefTransaction                = "5c55a7fdb7bb"       // more info: https://bsv.brc.dev/payments/0070
 	BRFCPike                           = "8c4ed5ef8ace"
+	BRFCProfileLookup                  = "0ace65da5987" // more info: https://github.com/bsv-blockchain/BRCs/blob/master/payments/0235.md
+	BRFCProfileReverseLookup           = "43dcf83ddc5f" // more info: https://github.com/bsv-blockchain/BRCs/blob/master/payments/0235.md
 	BRFCPikeInvite                     = "invite"
 	BRFCPikeOutputs                    = "outputs"
 )
@@ -207,6 +209,20 @@ const BRFCKnownSpecifications = `
     "title": "PIKE",
     "url": "TODO",
     "version": "1.0.0"
-   }
+   },
+  {
+   "author": "Deggen",
+   "id": "0ace65da5987",
+   "title": "public profile lookup",
+   "url": "https://github.com/bsv-blockchain/BRCs/blob/master/payments/0235.md",
+   "version": "v1.0.0"
+  },
+  {
+   "author": "Deggen",
+   "id": "43dcf83ddc5f",
+   "title": "public profile reverse lookup",
+   "url": "https://github.com/bsv-blockchain/BRCs/blob/master/payments/0235.md",
+   "version": "v1.0.0"
+  }
 ]
 `

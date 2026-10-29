@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/bsv-blockchain/go-paymail"
 	"github.com/bsv-blockchain/go-paymail/spv"
@@ -11,6 +12,7 @@ type PaymailServiceLocator struct {
 	paymailService     PaymailServiceProvider
 	pikeContactService PikeContactServiceProvider
 	pikePaymentService PikePaymentServiceProvider
+	profileLookup      ProfileLookupServiceProvider
 }
 
 func (l *PaymailServiceLocator) RegisterPaymailService(s PaymailServiceProvider) {
@@ -47,6 +49,18 @@ func (l *PaymailServiceLocator) GetPikePaymentService() PikePaymentServiceProvid
 	}
 
 	return l.pikePaymentService
+}
+
+func (l *PaymailServiceLocator) RegisterProfileLookupService(s ProfileLookupServiceProvider) {
+	l.profileLookup = s
+}
+
+func (l *PaymailServiceLocator) GetProfileLookupService() ProfileLookupServiceProvider {
+	if l.profileLookup == nil {
+		panic("ProfileLookupServiceProvider was not registered")
+	}
+
+	return l.profileLookup
 }
 
 // PaymailServiceProvider the paymail server interface that needs to be implemented
@@ -98,4 +112,18 @@ type PikePaymentServiceProvider interface {
 		satoshis uint64,
 		metaData *RequestMetadata,
 	) (*paymail.PikePaymentOutputsResponse, error)
+}
+
+// ProfileLookupServiceProvider answers the BRC-235 public profile lookup capabilities
+// from the host's handle registry. Return certificates as stored; the server drops any
+// that are not servable profiles for the requested domain.
+type ProfileLookupServiceProvider interface {
+	// LookupProfiles returns the profile certificates whose handle matches query, best
+	// match first. query is lowercase, 2-32 characters of a-z 0-9 . _ -, with any
+	// @domain suffix removed.
+	LookupProfiles(ctx context.Context, domain, query string) ([]json.RawMessage, error)
+
+	// ReverseLookupProfile returns the current profile certificate of identityKey at
+	// domain, or nil when the key holds no handle there.
+	ReverseLookupProfile(ctx context.Context, domain, identityKey string) (json.RawMessage, error)
 }

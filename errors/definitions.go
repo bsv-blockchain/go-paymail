@@ -55,6 +55,12 @@ var (
 var (
 	// ErrCouldNotFindPaymail is when could not find paymail
 	ErrCouldNotFindPaymail = SPVError{Message: "invalid paymail", StatusCode: 400, Code: "error-paymail-not-found"}
+
+	// ErrProfileNotFound is when an identity key holds no handle at this host (BRC-235 reverse lookup)
+	ErrProfileNotFound = SPVError{Message: "no active handle", StatusCode: 404, Code: "error-profile-not-found"}
+
+	// ErrProfileUnservable is when the profile lookup provider returns a certificate the server must not serve
+	ErrProfileUnservable = SPVError{Message: "stored profile certificate is not servable", StatusCode: 500, Code: "error-profile-unservable"}
 )
 
 // INVALID FIELD ERRORS

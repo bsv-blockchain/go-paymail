@@ -26,6 +26,7 @@ type Configuration struct {
 	BeefCapabilitiesEnabled          bool            `json:"beef_capabilities_enabled"`
 	PikeContactCapabilitiesEnabled   bool            `json:"pike_contact_capabilities_enabled"`
 	PikePaymentCapabilitiesEnabled   bool            `json:"pike_payment_capabilities_enabled"`
+	ProfileLookupCapabilitiesEnabled bool            `json:"profile_lookup_capabilities_enabled"`
 	ServiceName                      string          `json:"service_name"`
 	Timeout                          time.Duration   `json:"timeout"`
 	Logger                           *zerolog.Logger `json:"logger"`
@@ -34,6 +35,7 @@ type Configuration struct {
 	actions              PaymailServiceProvider
 	pikeContactActions   PikeContactServiceProvider
 	pikePaymentActions   PikePaymentServiceProvider
+	profileLookupActions ProfileLookupServiceProvider
 	nestedCapabilities   NestedCapabilitiesMap
 	callableCapabilities CallableCapabilitiesMap
 	staticCapabilities   StaticCapabilitiesMap
@@ -80,13 +82,22 @@ func NewConfig(serviceProvider *PaymailServiceLocator, opts ...ConfigOps) (*Conf
 		config.pikePaymentActions = serviceProvider.GetPikePaymentService()
 	}
 
+	if config.ProfileLookupCapabilitiesEnabled {
+		config.SetProfileLookupCapabilities()
+		config.profileLookupActions = serviceProvider.GetProfileLookupService()
+	}
+
 	// Validate the configuration
 	if err := config.Validate(); err != nil {
 		return nil, err
 	}
 
-	// Set the service provider
-	config.actions = serviceProvider.GetPaymailService()
+	// Set the service provider. The legacy capabilities need it; a server that
+	// hosts none of them (only BRC-235 profile lookups, say) may leave it unregistered.
+	if config.GenericCapabilitiesEnabled || config.P2PCapabilitiesEnabled || config.BeefCapabilitiesEnabled ||
+		serviceProvider.paymailService != nil {
+		config.actions = serviceProvider.GetPaymailService()
+	}
 
 	config.Logger.Debug().Msg("New config loaded")
 	return config, nil

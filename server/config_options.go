@@ -30,6 +30,7 @@ func defaultConfigOptions() *Configuration {
 		BeefCapabilitiesEnabled:          false,
 		PikeContactCapabilitiesEnabled:   false,
 		PikePaymentCapabilitiesEnabled:   false,
+		ProfileLookupCapabilitiesEnabled: false,
 		ServiceName:                      paymail.DefaultServiceName,
 		Timeout:                          DefaultTimeout,
 		Logger:                           logging.GetDefaultLogger(),
@@ -43,6 +44,23 @@ func defaultConfigOptions() *Configuration {
 func WithGenericCapabilities() ConfigOps {
 	return func(c *Configuration) {
 		c.GenericCapabilitiesEnabled = true
+	}
+}
+
+// WithoutGenericCapabilities will not load the generic Paymail capabilities (address
+// resolution, PKI, public profile, verify public key owner and the sender-validation flag),
+// which are on by default. Combine with WithProfileLookupCapabilities() to host BRC-235 alone.
+func WithoutGenericCapabilities() ConfigOps {
+	return func(c *Configuration) {
+		c.GenericCapabilitiesEnabled = false
+	}
+}
+
+// WithProfileLookupCapabilities will load the BRC-235 public profile lookup and reverse
+// lookup capabilities. A ProfileLookupServiceProvider must be registered.
+func WithProfileLookupCapabilities() ConfigOps {
+	return func(c *Configuration) {
+		c.ProfileLookupCapabilitiesEnabled = true
 	}
 }
 

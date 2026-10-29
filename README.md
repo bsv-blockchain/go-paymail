@@ -126,6 +126,7 @@ go get -u github.com/bsv-blockchain/go-paymail
 	- [Get Public Profile](public_profile.go)
 	- [P2P Payment Destination](p2p_payment_destination.go)
 	- [P2P Send Transaction](p2p_send_transaction.go)
+	- [BRC-235 Profile Lookup & Reverse Lookup](profile_lookup.go) (handle@domain ⇄ identity key, verified self-signed certificates)
 - [Paymail Server](server) (basic example for hosting your own paymail server)
 	- [Example Showing Capabilities](server/capabilities.go)
 	- [Example Showing PKI](server/pki.go)
@@ -133,6 +134,16 @@ go get -u github.com/bsv-blockchain/go-paymail
 	- [Example Address Resolution](server/resolve_address.go)
 	- [Example Getting a P2P Payment Destination](server/p2p_payment_destination.go)
 	- [Example Receiving a P2P Transaction](server/p2p_receive_transaction.go)
+	- [BRC-235 Profile Lookup](server/profile_lookup.go), hostable without any legacy capability:
+	  ```go
+	  locator := new(server.PaymailServiceLocator)
+	  locator.RegisterProfileLookupService(myRegistry) // implements server.ProfileLookupServiceProvider
+	  config, err := server.NewConfig(locator,
+	      server.WithDomain("example.com"),
+	      server.WithoutGenericCapabilities(), // advertise only 0ace65da5987 and 43dcf83ddc5f
+	      server.WithProfileLookupCapabilities(),
+	  )
+	  ```
 - [Paymail Utilities](utilities.go) (handy methods)
 	- [Sanitize & Validate Paymail Addresses](utilities.go)
 	- [Sign & Verify Sender Request](sender_request.go)

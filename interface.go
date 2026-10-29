@@ -22,7 +22,9 @@ type ClientInterface interface {
 	GetResolver() interfaces.DNSResolver
 	GetSRVRecord(service, protocol, domainName string) (srv *net.SRV, err error)
 	GetUserAgent() string
+	LookupProfiles(lookupURL, domain, query string) (response *ProfileLookupResponse, err error)
 	ResolveAddress(resolutionURL, alias, domain string, senderRequest *SenderRequest) (response *ResolutionResponse, err error)
+	ReverseLookupProfile(reverseURL, domain, identityKey string) (response *ProfileReverseLookupResponse, err error)
 	SendP2PTransaction(p2pURL, alias, domain string, transaction *P2PTransaction) (response *P2PTransactionResponse, err error)
 	ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, priority, weight uint16) error
 	VerifyPubKey(verifyURL, alias, domain, pubKey string) (response *VerificationResponse, err error)

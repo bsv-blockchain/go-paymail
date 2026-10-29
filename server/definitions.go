@@ -21,6 +21,8 @@ const (
 	PubKeyParamName         = "pubKey"               // Used to get actual pubkey from the request url
 	PaymailAddressTemplate  = "{alias}@{domain.tld}" // Used as a placeholder in capabilities list
 	PubKeyTemplate          = "{pubkey}"             // Used as a placeholder in capabilities list
+	ProfileQueryParamName   = "query"                // Used to get the handle query from a BRC-235 lookup url
+	ProfileQueryTemplate    = "{query}"              // Used as a placeholder in capabilities list
 )
 
 // basicRoutes is the configuration for basic server routes

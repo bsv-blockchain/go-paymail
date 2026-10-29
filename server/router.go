@@ -66,6 +66,7 @@ func (c *Configuration) registerRoute(engine *gin.Engine, capability CallableCap
 func (c *Configuration) templateToRouterPath(template string) string {
 	template = strings.ReplaceAll(template, PaymailAddressTemplate, _routerParam(PaymailAddressParamName))
 	template = strings.ReplaceAll(template, PubKeyTemplate, _routerParam(PubKeyParamName))
+	template = strings.ReplaceAll(template, ProfileQueryTemplate, _routerParam(ProfileQueryParamName))
 	return fmt.Sprintf("/%s/%s/%s", c.APIVersion, c.ServiceName, strings.TrimPrefix(template, "/"))
 }
 
